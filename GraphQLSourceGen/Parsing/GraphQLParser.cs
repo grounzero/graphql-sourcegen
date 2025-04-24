@@ -4,7 +4,7 @@ using System.Text;
 namespace GraphQLSourceGen.Parsing
 {
     /// <summary>
-    /// A robust parser for GraphQL fragments
+    /// GraphQL fragments parser
     /// </summary>
     public class GraphQLParser
     {
@@ -391,16 +391,16 @@ namespace GraphQLSourceGen.Parsing
         private static string ParseTypeAnnotation(List<Token> tokens, ref int position)
         {
             StringBuilder typeBuilder = new StringBuilder();
-            
+
             // Handle list type
             if (position < tokens.Count && tokens[position].Value == "[")
             {
                 typeBuilder.Append('[');
                 position++; // Skip '['
-                
+
                 // Parse inner type
                 typeBuilder.Append(ParseTypeAnnotation(tokens, ref position));
-                
+
                 // Expect closing bracket
                 if (position < tokens.Count && tokens[position].Value == "]")
                 {
@@ -414,14 +414,14 @@ namespace GraphQLSourceGen.Parsing
                 typeBuilder.Append(tokens[position].Value);
                 position++; // Skip type name
             }
-            
+
             // Handle non-null
             if (position < tokens.Count && tokens[position].Value == "!")
             {
                 typeBuilder.Append('!');
                 position++; // Skip '!'
             }
-            
+
             return typeBuilder.ToString();
         }
 

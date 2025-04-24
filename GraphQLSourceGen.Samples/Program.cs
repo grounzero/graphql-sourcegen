@@ -1,5 +1,3 @@
-using GraphQL.Generated;
-
 namespace GraphQLSourceGen.Samples
 {
     class Program
@@ -17,16 +15,15 @@ namespace GraphQLSourceGen.Samples
                     Id = "user-123",
                     Name = "John Doe",
                     Email = "john.doe@example.com",
-                    // IsActive might be a different type in the generated code
-                    // IsActive = true
+                    IsActive = true
                 };
-                
+
                 Console.WriteLine("\nUser Basic Fragment:");
                 Console.WriteLine($"ID: {user.Id}");
                 Console.WriteLine($"Name: {user.Name}");
                 Console.WriteLine($"Email: {user.Email}");
                 Console.WriteLine($"Active: {user.IsActive}");
-                
+
                 // Create a PostWithStatsFragment instance
                 var post = new PostWithStatsFragment
                 {
@@ -39,7 +36,7 @@ namespace GraphQLSourceGen.Samples
                     Tags = new List<string?> { "GraphQL", "C#", "Source Generators" },
                     Categories = new List<string> { "Programming", "Web Development" }
                 };
-                
+
                 Console.WriteLine("\nPost With Stats Fragment:");
                 Console.WriteLine($"ID: {post.Id}");
                 Console.WriteLine($"Title: {post.Title}");
@@ -47,17 +44,17 @@ namespace GraphQLSourceGen.Samples
                 Console.WriteLine($"Rating: {post.Rating}");
                 Console.WriteLine($"Published: {post.IsPublished}");
                 Console.WriteLine($"Published At: {post.PublishedAt}");
-                
+
                 // Handle potential null values
                 var tags = post.Tags as IEnumerable<object>;
                 Console.WriteLine($"Tags: {(tags != null ? string.Join(", ", tags) : "none")}");
-                
+
                 var categories = post.Categories as IEnumerable<object>;
                 Console.WriteLine($"Categories: {(categories != null ? string.Join(", ", categories) : "none")}");
-                
+
                 // Try to access other generated fragments
                 Console.WriteLine("\nOther Generated Fragments:");
-                
+
                 // UserDetails fragment
                 try
                 {
@@ -76,7 +73,7 @@ namespace GraphQLSourceGen.Samples
                 {
                     Console.WriteLine($"Failed to create UserDetailsFragment: {ex.Message}");
                 }
-                
+
                 // UserWithPosts fragment
                 try
                 {
@@ -95,7 +92,7 @@ namespace GraphQLSourceGen.Samples
                 {
                     Console.WriteLine($"Failed to create UserWithPostsFragment: {ex.Message}");
                 }
-                
+
                 // RequiredUserInfo fragment
                 try
                 {
@@ -114,7 +111,7 @@ namespace GraphQLSourceGen.Samples
                 {
                     Console.WriteLine($"Failed to create RequiredUserInfoFragment: {ex.Message}");
                 }
-                
+
                 // UserWithDeprecated fragment
                 try
                 {
@@ -139,7 +136,7 @@ namespace GraphQLSourceGen.Samples
                 Console.WriteLine($"Error: {ex.Message}");
                 Console.WriteLine($"Stack Trace: {ex.StackTrace}");
             }
-            
+
             Console.WriteLine("\nPress any key to exit...");
             Console.ReadKey();
         }
