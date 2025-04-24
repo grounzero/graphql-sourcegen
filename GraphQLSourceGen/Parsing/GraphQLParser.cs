@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using GraphQLSourceGen.Models;
+using System.Text.RegularExpressions;
 
 namespace GraphQLSourceGen.Parsing
 {
@@ -13,19 +8,19 @@ namespace GraphQLSourceGen.Parsing
     /// </summary>
     public class GraphQLParser
     {
-        private static readonly Regex FragmentRegex = new Regex(
+        static readonly Regex FragmentRegex = new Regex(
             @"fragment\s+(?<name>\w+)\s+on\s+(?<type>\w+)\s*{(?<body>[^}]*)}",
             RegexOptions.Compiled | RegexOptions.Singleline);
 
-        private static readonly Regex FieldRegex = new Regex(
+        static readonly Regex FieldRegex = new Regex(
             @"(?<name>\w+)(?:\s*\(.*?\))?\s*(?::(?<type>[^\s{,]*))?\s*(?<selection>{[^}]*})?(?<deprecated>@deprecated(?:\(reason:\s*""(?<reason>[^""]*)""\))?)?",
             RegexOptions.Compiled | RegexOptions.Singleline);
 
-        private static readonly Regex FragmentSpreadRegex = new Regex(
+        static readonly Regex FragmentSpreadRegex = new Regex(
             @"\.\.\.\s*(?<name>\w+)",
             RegexOptions.Compiled);
 
-        private static readonly Dictionary<string, string> ScalarMappings = new Dictionary<string, string>
+        static readonly Dictionary<string, string> ScalarMappings = new Dictionary<string, string>
         {
             { "String", "string" },
             { "Int", "int" },
@@ -73,7 +68,7 @@ namespace GraphQLSourceGen.Parsing
         /// <summary>
         /// Parse fields from a GraphQL selection set
         /// </summary>
-        private static List<GraphQLField> ParseFields(string selectionSet)
+        static List<GraphQLField> ParseFields(string selectionSet)
         {
             var fields = new List<GraphQLField>();
             var matches = FieldRegex.Matches(selectionSet);
@@ -119,7 +114,7 @@ namespace GraphQLSourceGen.Parsing
         /// <summary>
         /// Parse a GraphQL type
         /// </summary>
-        private static GraphQLType ParseType(string typeStr)
+        static GraphQLType ParseType(string typeStr)
         {
             if (string.IsNullOrWhiteSpace(typeStr))
             {

@@ -1,6 +1,3 @@
-using System;
-using GraphQLSourceGen.Tests;
-
 namespace GraphQLSourceGen.Tests
 {
     class Program
@@ -37,14 +34,14 @@ namespace GraphQLSourceGen.Tests
             }
         }
 
-        private static void RunParserTests(GraphQLParserTests tests)
+        static void RunParserTests(GraphQLParserTests tests)
         {
             // Manually invoke each test method
             typeof(GraphQLParserTests)
                 .GetMethods()
                 .Where(m => m.Name.StartsWith("Parse") || m.Name.StartsWith("Map"))
                 .ToList()
-                .ForEach(method => 
+                .ForEach(method =>
                 {
                     Console.WriteLine($"  Running test: {method.Name}");
                     method.Invoke(tests, null);

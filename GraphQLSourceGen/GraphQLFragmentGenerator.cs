@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
 using GraphQLSourceGen.Models;
 using GraphQLSourceGen.Parsing;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
+using System.Text;
 
 namespace GraphQLSourceGen
 {
@@ -47,7 +44,7 @@ namespace GraphQLSourceGen
             }
         }
 
-        private string GenerateFragmentCode(GraphQLFragment fragment, List<GraphQLFragment> allFragments)
+        string GenerateFragmentCode(GraphQLFragment fragment, List<GraphQLFragment> allFragments)
         {
             var sb = new StringBuilder();
 
@@ -55,7 +52,7 @@ namespace GraphQLSourceGen
             sb.AppendLine("using System;");
             sb.AppendLine("using System.Collections.Generic;");
             sb.AppendLine();
-            
+
 
             // Add namespace
             sb.AppendLine("namespace GraphQL.Generated");
@@ -70,7 +67,7 @@ namespace GraphQLSourceGen
             return sb.ToString();
         }
 
-        private void GenerateClass(StringBuilder sb, GraphQLFragment fragment, List<GraphQLFragment> allFragments, string indent)
+        void GenerateClass(StringBuilder sb, GraphQLFragment fragment, List<GraphQLFragment> allFragments, string indent)
         {
             // Class declaration
             sb.AppendLine($"{indent}/// <summary>");
@@ -103,7 +100,7 @@ namespace GraphQLSourceGen
             sb.AppendLine($"{indent}}}");
         }
 
-        private void GenerateProperty(StringBuilder sb, GraphQLField field, List<GraphQLFragment> allFragments, string indent)
+        void GenerateProperty(StringBuilder sb, GraphQLField field, List<GraphQLFragment> allFragments, string indent)
         {
             // Add XML documentation
             sb.AppendLine($"{indent}/// <summary>");

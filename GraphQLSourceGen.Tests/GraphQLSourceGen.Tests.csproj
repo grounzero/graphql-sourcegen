@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GraphQLSourceGen.csproj" />
+    <ProjectReference Include="..\GraphQLSourceGen\GraphQLSourceGen.csproj" />
   </ItemGroup>
 
   <ItemGroup>

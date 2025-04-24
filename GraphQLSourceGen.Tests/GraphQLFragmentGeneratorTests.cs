@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using GraphQLSourceGen.Models;
 using GraphQLSourceGen.Parsing;
 
 namespace GraphQLSourceGen.Tests
@@ -118,7 +115,7 @@ namespace GraphQLSourceGen.Tests
             TestParserExtractsFragments();
             TestParserHandlesDeprecatedFields();
             TestParserHandlesNestedObjects();
-            
+
             Console.WriteLine("All tests passed!");
         }
     }
