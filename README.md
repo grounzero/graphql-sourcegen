@@ -419,7 +419,7 @@ If you have multiple schema files with conflicting type definitions:
 
 1. **Merge the schemas**: Combine the schema files into a single file
 2. **Use schema extensions**: Use the `extend type` syntax in GraphQL to extend existing types
-3. **Prioritize schemas**: List the most important schema file first in `GraphQLSourceGenSchemaFiles`
+3. **Prioritise schemas**: List the most important schema file first in `GraphQLSourceGenSchemaFiles`
 
 ```graphql
 # Base schema
@@ -441,12 +441,13 @@ If your schema contains circular references (e.g., User references Post, which r
 - For deep nesting, consider using fragment spreads instead of inline selections
 - Use the @skip or @include directives to conditionally include fields
 
-#### Circular References
+#### Custom Scalar Type Conflicts
+
 If you have conflicts with custom scalar mappings:
 
-Ensure consistent scalar definitions across schema files
-Provide explicit mappings for all custom scalars
-Use domain-specific C# types for clarity
+- Ensure consistent scalar definitions across schema files
+- Provide explicit mappings for all custom scalars
+- Use domain-specific C# types for clarity
 
 
 ## Contributing
