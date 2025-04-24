@@ -28,6 +28,11 @@ namespace GraphQLSourceGen.Tests
             catch (Exception ex)
             {
                 Console.WriteLine($"Test failed: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                    Console.WriteLine(ex.InnerException.StackTrace);
+                }
                 Console.WriteLine(ex.StackTrace);
                 // Return non-zero exit code to indicate failure
                 return;
