@@ -1,3 +1,5 @@
+using GraphQL.Generated;
+
 namespace GraphQLSourceGen.Samples
 {
     class Program
@@ -15,7 +17,7 @@ namespace GraphQLSourceGen.Samples
                     Id = "user-123",
                     Name = "John Doe",
                     Email = "john.doe@example.com",
-                    IsActive = true
+                    IsActive = "true"
                 };
 
                 Console.WriteLine("\nUser Basic Fragment:");
