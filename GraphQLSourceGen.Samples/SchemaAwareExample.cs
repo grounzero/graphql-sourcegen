@@ -18,7 +18,43 @@ namespace GraphQLSourceGen.Samples
             Console.WriteLine("=========================================");
 
             // Step 1: Load the GraphQL schema
-            string schemaContent = File.ReadAllText("schema-definition.graphql");
+            string schemaFilePath = "schema-definition.graphql";
+            
+            // Try different paths if the file is not found
+            if (!File.Exists(schemaFilePath))
+            {
+                // Try with full path from current directory
+                string currentDir = Directory.GetCurrentDirectory();
+                Console.WriteLine($"Current directory: {currentDir}");
+                
+                // Try alternative paths
+                string[] possiblePaths = new[]
+                {
+                    Path.Combine(currentDir, "schema-definition.graphql"),
+                    Path.Combine(currentDir, "..", "..", "..", "schema-definition.graphql"),
+                    Path.Combine(currentDir, "..", "..", "..", "..", "GraphQLSourceGen.Samples", "schema-definition.graphql")
+                };
+                
+                foreach (string path in possiblePaths)
+                {
+                    Console.WriteLine($"Trying path: {path}");
+                    if (File.Exists(path))
+                    {
+                        schemaFilePath = path;
+                        Console.WriteLine($"Found schema file at: {schemaFilePath}");
+                        break;
+                    }
+                }
+            }
+            
+            if (!File.Exists(schemaFilePath))
+            {
+                Console.WriteLine($"Error: Could not find schema file at {schemaFilePath}");
+                Console.WriteLine("Please ensure the schema-definition.graphql file is in the correct location.");
+                return;
+            }
+            
+            string schemaContent = File.ReadAllText(schemaFilePath);
             var schema = GraphQLSchemaParser.ParseSchema(schemaContent);
             
             Console.WriteLine($"Loaded schema with:");
