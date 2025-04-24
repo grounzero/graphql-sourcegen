@@ -6,7 +6,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphQLSourceGen.Tests", "G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSourceGen", "GraphQLSourceGen\GraphQLSourceGen.csproj", "{3517AEAF-A318-D15F-A9CC-DDF3639CC089}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSourceGen.Samples", "samples\GraphQLSourceGen.Samples\GraphQLSourceGen.Samples.csproj", "{B4C5D6E7-F8A9-0B1C-2D3E-4F5A6B7C8D9E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSourceGen.Samples", "GraphQLSourceGen.Samples\GraphQLSourceGen.Samples.csproj", "{B4C5D6E7-F8A9-0B1C-2D3E-4F5A6B7C8D9E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

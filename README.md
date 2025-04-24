@@ -1,25 +1,45 @@
 # GraphQL Fragment Source Generator
 
-A Roslyn-based C# Source Generator that scans GraphQL files for fragment definitions and produces matching C# record types.
+A Roslyn-based C# Source Generator that scans GraphQL files for fragment definitions and produces matching C# types.
 
 ## Features
 
-- Automatically generates C# record types from GraphQL fragment definitions
+- Automatically generates C# types from GraphQL fragment definitions
 - Preserves GraphQL scalar-to-C# type mappings
 - Supports nullable reference types to reflect GraphQL nullability
-- Handles nested selections with nested record types
+- Handles nested selections with nested types
 - Supports `@deprecated` directive with `[Obsolete]` attributes
 - Handles fragment spreads through composition
+- Configurable output (namespace, records vs classes, etc.)
+- Comprehensive error reporting and diagnostics
 
 ## Installation
 
-Add a reference to the source generator project in your .NET 6+ SDK-style project:
+### NuGet Package (Recommended)
+
+Install the package from NuGet:
+
+```bash
+dotnet add package GraphQLSourceGen
+```
+
+Or add it directly to your project file:
+
+```xml
+<ItemGroup>
+  <PackageReference Include="GraphQLSourceGen" Version="1.0.0" />
+</ItemGroup>
+```
+
+### Project Reference (For Development)
+
+If you're developing or customising the generator, add a reference to the source generator project:
 
 ```xml
 <ItemGroup>
   <ProjectReference Include="..\GraphQLSourceGen\GraphQLSourceGen.csproj" 
                     OutputItemType="Analyzer" 
-                    ReferenceOutputAssembly="false" />
+                    ReferenceOutputAssembly="true" />
 </ItemGroup>
 ```
 
@@ -34,11 +54,31 @@ Add a reference to the source generator project in your .NET 6+ SDK-style projec
 </ItemGroup>
 ```
 
-3. The source generator will automatically process these files and generate C# record types for each fragment
+3. The source generator will automatically process these files and generate C# types for each fragment
 
-## Example
+## Configuration
 
-### GraphQL Fragment
+You can configure the generator using MSBuild properties in your project file:
+
+```xml
+<PropertyGroup>
+  <!-- Customise the namespace for generated types -->
+  <GraphQLSourceGenNamespace>MyCompany.GraphQL.Generated</GraphQLSourceGenNamespace>
+  
+  <!-- Use classes instead of records -->
+  <GraphQLSourceGenUseRecords>false</GraphQLSourceGenUseRecords>
+  
+  <!-- Use regular properties instead of init-only properties -->
+  <GraphQLSourceGenUseInitProperties>false</GraphQLSourceGenUseInitProperties>
+  
+  <!-- Disable XML documentation comments -->
+  <GraphQLSourceGenGenerateDocComments>false</GraphQLSourceGenGenerateDocComments>
+</PropertyGroup>
+```
+
+## Examples
+
+### Basic Fragment
 
 ```graphql
 fragment UserBasic on User {
@@ -49,11 +89,13 @@ fragment UserBasic on User {
 }
 ```
 
-### Generated C# Record
+Generated C# type:
 
 ```csharp
 using System;
 using System.Collections.Generic;
+
+#nullable enable
 
 namespace GraphQL.Generated
 {
@@ -84,3 +126,77 @@ namespace GraphQL.Generated
     }
 }
 ```
+
+### Fragment with Nested Objects
+
+```graphql
+fragment UserWithProfile on User {
+  id
+  name
+  profile {
+    bio
+    avatarUrl
+    joinDate
+  }
+}
+```
+
+### Fragment with Non-Nullable Fields
+
+```graphql
+fragment RequiredUserInfo on User {
+  id!
+  name!
+  email
+}
+```
+
+### Fragment with Deprecated Fields
+
+```graphql
+fragment UserWithDeprecated on User {
+  id
+  name
+  username @deprecated(reason: "Use email instead")
+  oldField @deprecated
+}
+```
+
+### Fragment that References Another Fragment
+
+```graphql
+fragment UserWithPosts on User {
+  ...UserBasic
+  posts {
+    id
+    title
+  }
+}
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### No Code is Generated
+
+Make sure:
+- Your `.graphql` files are marked as `AdditionalFiles` in your project file
+- Your GraphQL files contain valid fragment definitions
+- You've added the package reference correctly
+
+#### Error GQLSG001: Invalid GraphQL syntax
+
+This indicates a syntax error in your GraphQL file. Check the error message for details on the specific issue.
+
+#### Error GQLSG002: No GraphQL fragments found
+
+The GraphQL file doesn't contain any fragment definitions. Make sure you're using the `fragment Name on Type { ... }` syntax.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

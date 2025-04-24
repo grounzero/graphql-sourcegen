@@ -7,6 +7,7 @@ namespace GraphQLSourceGen.Diagnostics
     /// </summary>
     internal static class DiagnosticDescriptors
     {
+        private const string AnalyzerReleaseTrackingId = "GQLSG";
         /// <summary>
         /// Invalid GraphQL syntax diagnostic
         /// </summary>
@@ -17,7 +18,9 @@ namespace GraphQLSourceGen.Diagnostics
             category: "GraphQLSourceGen",
             DiagnosticSeverity.Error,
             isEnabledByDefault: true,
-            description: "The GraphQL file contains syntax that could not be parsed. Fix the syntax error to generate code.");
+            description: "The GraphQL file contains syntax that could not be parsed. Fix the syntax error to generate code.",
+            helpLinkUri: $"https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md",
+            customTags: new[] { WellKnownDiagnosticTags.AnalyzerException });
             
         /// <summary>
         /// No GraphQL fragments found diagnostic
@@ -29,7 +32,9 @@ namespace GraphQLSourceGen.Diagnostics
             category: "GraphQLSourceGen",
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "The GraphQL file does not contain any fragment definitions. Add fragment definitions to generate code.");
+            description: "The GraphQL file does not contain any fragment definitions. Add fragment definitions to generate code.",
+            helpLinkUri: $"https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md",
+            customTags: new[] { WellKnownDiagnosticTags.AnalyzerException });
             
         /// <summary>
         /// Invalid fragment name diagnostic
@@ -41,7 +46,9 @@ namespace GraphQLSourceGen.Diagnostics
             category: "GraphQLSourceGen",
             DiagnosticSeverity.Error,
             isEnabledByDefault: true,
-            description: "The fragment name must be a valid C# identifier. Rename the fragment to a valid C# identifier.");
+            description: "The fragment name must be a valid C# identifier. Rename the fragment to a valid C# identifier.",
+            helpLinkUri: $"https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md",
+            customTags: new[] { WellKnownDiagnosticTags.AnalyzerException });
             
         /// <summary>
         /// Fragment spread not found diagnostic
@@ -53,6 +60,8 @@ namespace GraphQLSourceGen.Diagnostics
             category: "GraphQLSourceGen",
             DiagnosticSeverity.Error,
             isEnabledByDefault: true,
-            description: "The fragment spread references a fragment that was not found in any of the GraphQL files. Make sure the fragment is defined in one of the GraphQL files.");
+            description: "The fragment spread references a fragment that was not found in any of the GraphQL files. Make sure the fragment is defined in one of the GraphQL files.",
+            helpLinkUri: $"https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md",
+            customTags: new[] { WellKnownDiagnosticTags.AnalyzerException });
     }
 }

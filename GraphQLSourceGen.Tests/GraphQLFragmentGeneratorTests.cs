@@ -28,7 +28,7 @@ namespace GraphQLSourceGen.Tests
             var fragments = GraphQLParser.ParseContent(graphqlContent);
 
             // Verify the fragment was parsed correctly
-            Assert.Equal(1, fragments.Count);
+            Assert.Single(fragments);
 
             var fragment = fragments[0];
             Assert.Equal("UserBasic", fragment.Name);
