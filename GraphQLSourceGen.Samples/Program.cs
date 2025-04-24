@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace GraphQLSourceGen.Samples
 {
     // Define the classes that would normally be generated
@@ -21,7 +18,7 @@ namespace GraphQLSourceGen.Samples
         public bool IsPublished { get; set; }
         public DateTime? PublishedAt { get; set; }
         public List<string>? Tags { get; set; }
-        public List<string> Categories { get; set; } = new List<string>();
+        public List<string> Categories { get; set; } = [];
     }
 
     class Program
@@ -30,7 +27,7 @@ namespace GraphQLSourceGen.Samples
         {
             Console.WriteLine("GraphQL Source Generator Samples");
             Console.WriteLine("================================");
-            
+
             // Create a UserBasicFragment instance
             var user = new UserBasicFragment
             {
@@ -39,13 +36,13 @@ namespace GraphQLSourceGen.Samples
                 Email = "john.doe@example.com",
                 IsActive = true
             };
-            
+
             Console.WriteLine("\nUser Basic Fragment:");
             Console.WriteLine($"ID: {user.Id}");
             Console.WriteLine($"Name: {user.Name}");
             Console.WriteLine($"Email: {user.Email}");
             Console.WriteLine($"Active: {user.IsActive}");
-            
+
             // Create a PostWithStatsFragment instance
             var post = new PostWithStatsFragment
             {
@@ -55,10 +52,10 @@ namespace GraphQLSourceGen.Samples
                 Rating = 4.8,
                 IsPublished = true,
                 PublishedAt = DateTime.Now.AddDays(-14),
-                Tags = new List<string> { "GraphQL", "C#", "Source Generators" },
-                Categories = new List<string> { "Programming", "Web Development" }
+                Tags = ["GraphQL", "C#", "Source Generators"],
+                Categories = ["Programming", "Web Development"]
             };
-            
+
             Console.WriteLine("\nPost With Stats Fragment:");
             Console.WriteLine($"ID: {post.Id}");
             Console.WriteLine($"Title: {post.Title}");
@@ -66,9 +63,9 @@ namespace GraphQLSourceGen.Samples
             Console.WriteLine($"Rating: {post.Rating}");
             Console.WriteLine($"Published: {post.IsPublished}");
             Console.WriteLine($"Published At: {post.PublishedAt}");
-            Console.WriteLine($"Tags: {string.Join(", ", post.Tags ?? new List<string>())}");
+            Console.WriteLine($"Tags: {string.Join(", ", post.Tags ?? [])}");
             Console.WriteLine($"Categories: {string.Join(", ", post.Categories)}");
-            
+
             Console.WriteLine("\nPress any key to exit...");
             Console.ReadKey();
         }

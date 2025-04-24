@@ -29,8 +29,8 @@ namespace GraphQLSourceGen.Models
         public GraphQLType Type { get; set; } = new GraphQLType();
         public bool IsDeprecated { get; set; }
         public string? DeprecationReason { get; set; }
-        public List<GraphQLField> SelectionSet { get; set; } = new List<GraphQLField>();
-        public List<string> FragmentSpreads { get; set; } = new List<string>();
+        public List<GraphQLField> SelectionSet { get; set; } = [];
+        public List<string> FragmentSpreads { get; set; } = [];
     }
 
     /// <summary>
@@ -40,6 +40,6 @@ namespace GraphQLSourceGen.Models
     {
         public string Name { get; set; } = string.Empty;
         public string OnType { get; set; } = string.Empty;
-        public List<GraphQLField> Fields { get; set; } = new List<GraphQLField>();
+        public List<GraphQLField> Fields { get; set; } = [];
     }
 }
