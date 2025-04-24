@@ -20,8 +20,8 @@ namespace GraphQLSourceGen.Diagnostics
             isEnabledByDefault: true,
             description: "The GraphQL file contains syntax that could not be parsed. Fix the syntax error to generate code.",
             helpLinkUri: $"https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md",
-            customTags: new[] { WellKnownDiagnosticTags.AnalyzerException });
-            
+            customTags: [WellKnownDiagnosticTags.AnalyzerException]);
+
         /// <summary>
         /// No GraphQL fragments found diagnostic
         /// </summary>
@@ -34,8 +34,8 @@ namespace GraphQLSourceGen.Diagnostics
             isEnabledByDefault: true,
             description: "The GraphQL file does not contain any fragment definitions. Add fragment definitions to generate code.",
             helpLinkUri: $"https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md",
-            customTags: new[] { WellKnownDiagnosticTags.AnalyzerException });
-            
+            customTags: [WellKnownDiagnosticTags.AnalyzerException]);
+
         /// <summary>
         /// Invalid fragment name diagnostic
         /// </summary>
@@ -48,8 +48,8 @@ namespace GraphQLSourceGen.Diagnostics
             isEnabledByDefault: true,
             description: "The fragment name must be a valid C# identifier. Rename the fragment to a valid C# identifier.",
             helpLinkUri: $"https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md",
-            customTags: new[] { WellKnownDiagnosticTags.AnalyzerException });
-            
+            customTags: [WellKnownDiagnosticTags.AnalyzerException]);
+
         /// <summary>
         /// Fragment spread not found diagnostic
         /// </summary>
@@ -62,6 +62,6 @@ namespace GraphQLSourceGen.Diagnostics
             isEnabledByDefault: true,
             description: "The fragment spread references a fragment that was not found in any of the GraphQL files. Make sure the fragment is defined in one of the GraphQL files.",
             helpLinkUri: $"https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md",
-            customTags: new[] { WellKnownDiagnosticTags.AnalyzerException });
+            customTags: [WellKnownDiagnosticTags.AnalyzerException]);
     }
 }

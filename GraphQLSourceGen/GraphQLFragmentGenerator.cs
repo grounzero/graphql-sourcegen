@@ -40,7 +40,7 @@ namespace GraphQLSourceGen
                 {
                     var fileContent = file.GetText()?.ToString() ?? string.Empty;
                     var fragments = GraphQLParser.ParseFile(fileContent);
-                    
+
                     if (!fragments.Any())
                     {
                         // Report diagnostic for no fragments found
@@ -51,7 +51,7 @@ namespace GraphQLSourceGen
                         context.ReportDiagnostic(diagnostic);
                         continue;
                     }
-                    
+
                     allFragments.AddRange(fragments);
                 }
                 catch (Exception ex)
@@ -87,7 +87,7 @@ namespace GraphQLSourceGen
                 }
             }
         }
-        
+
         private void ValidateFragments(GeneratorExecutionContext context, List<GraphQLFragment> fragments)
         {
             // Check for invalid fragment names
@@ -102,9 +102,9 @@ namespace GraphQLSourceGen
                     context.ReportDiagnostic(diagnostic);
                 }
             }
-            
+
             // Check for fragment spreads that don't exist
-            var fragmentNames = new HashSet<string>(fragments.Select(f => f.Name));
+            HashSet<string> fragmentNames = [.. fragments.Select(f => f.Name)];
             foreach (var fragment in fragments)
             {
                 foreach (var field in fragment.Fields)
@@ -123,48 +123,48 @@ namespace GraphQLSourceGen
                 }
             }
         }
-        
+
         private bool IsValidCSharpIdentifier(string name)
         {
             if (string.IsNullOrEmpty(name))
                 return false;
-                
+
             if (!char.IsLetter(name[0]) && name[0] != '_')
                 return false;
-                
+
             for (int i = 1; i < name.Length; i++)
             {
                 if (!char.IsLetterOrDigit(name[i]) && name[i] != '_')
                     return false;
             }
-            
+
             return true;
         }
 
         private GraphQLSourceGenOptions ReadConfiguration(GeneratorExecutionContext context)
         {
             var options = new GraphQLSourceGenOptions();
-            
+
             if (context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.GraphQLSourceGenNamespace", out var ns))
             {
                 options.Namespace = ns;
             }
-            
+
             if (context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.GraphQLSourceGenUseRecords", out var useRecords))
             {
                 options.UseRecords = bool.TryParse(useRecords, out var value) && value;
             }
-            
+
             if (context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.GraphQLSourceGenUseInitProperties", out var useInitProperties))
             {
                 options.UseInitProperties = bool.TryParse(useInitProperties, out var value) && value;
             }
-            
+
             if (context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.GraphQLSourceGenGenerateDocComments", out var generateDocComments))
             {
                 options.GenerateDocComments = bool.TryParse(generateDocComments, out var value) && value;
             }
-            
+
             return options;
         }
 
@@ -202,7 +202,7 @@ namespace GraphQLSourceGen
                 sb.AppendLine($"{indent}/// Generated from GraphQL fragment '{fragment.Name}' on type '{fragment.OnType}'");
                 sb.AppendLine($"{indent}/// </summary>");
             }
-            
+
             string typeKeyword = options.UseRecords ? "record" : "class";
             sb.AppendLine($"{indent}public {typeKeyword} {fragment.Name}Fragment");
             sb.AppendLine($"{indent}{{");
@@ -394,36 +394,43 @@ namespace GraphQLSourceGen
                     // For fields with selection sets, use a nested type
                     string typeName = char.ToUpper(field.Name[0]) + field.Name.Substring(1);
                     bool isList = field.Type?.IsList ?? false;
-                    bool isNullable = field.Type?.IsNullable ?? true;
-
+                    
+                    // Always make properties nullable to avoid warnings
                     if (isList)
                     {
-                        propertyType = $"List<{typeName}Model>{(isNullable ? "?" : "")}";
+                        propertyType = $"List<{typeName}Model>?";
                     }
                     else
                     {
-                        propertyType = $"{typeName}Model{(isNullable ? "?" : "")}";
+                        propertyType = $"{typeName}Model?";
                     }
                 }
                 else if (field.FragmentSpreads != null && field.FragmentSpreads.Any())
                 {
                     // For fragment spreads, use the fragment type
                     string spreadName = field.FragmentSpreads.First();
-                    propertyType = $"{spreadName}Fragment";
-                    if (field.Type?.IsNullable ?? true)
-                    {
-                        propertyType += "?";
-                    }
+                    propertyType = $"{spreadName}Fragment?";
                 }
                 else
                 {
-                    // For scalar fields, map to C# types
-                    propertyType = GraphQLParser.MapToCSharpType(field.Type ?? new GraphQLType { Name = "String", IsNullable = true });
+                    // For scalar fields, map to C# types and make them nullable
+                    var baseType = GraphQLParser.MapToCSharpType(field.Type ?? new GraphQLType { Name = "String", IsNullable = true });
+                    
+                    // If it's not already nullable and not a value type, make it nullable
+                    if (!baseType.EndsWith("?") && !IsValueType(baseType))
+                    {
+                        propertyType = baseType + "?";
+                    }
+                    else
+                    {
+                        propertyType = baseType;
+                    }
                 }
 
                 // Generate the property
                 string propertyName = char.ToUpper(field.Name[0]) + field.Name.Substring(1);
                 string accessors = options.UseInitProperties ? "{ get; init; }" : "{ get; set; }";
+                
                 sb.AppendLine($"{indent}public {propertyType} {propertyName} {accessors}");
             }
             catch (Exception ex)
@@ -431,6 +438,28 @@ namespace GraphQLSourceGen
                 // Add a comment about the error instead of failing
                 sb.AppendLine($"{indent}// Error generating property: {ex.Message}");
             }
+        }
+        
+        // Helper method to determine if a type is a value type
+        private bool IsValueType(string typeName)
+        {
+            return typeName == "int" ||
+                   typeName == "long" ||
+                   typeName == "float" ||
+                   typeName == "double" ||
+                   typeName == "decimal" ||
+                   typeName == "bool" ||
+                   typeName == "DateTime" ||
+                   typeName == "Guid" ||
+                   typeName == "TimeSpan" ||
+                   typeName == "DateTimeOffset" ||
+                   typeName == "byte" ||
+                   typeName == "sbyte" ||
+                   typeName == "short" ||
+                   typeName == "ushort" ||
+                   typeName == "uint" ||
+                   typeName == "ulong" ||
+                   typeName == "char";
         }
     }
 }

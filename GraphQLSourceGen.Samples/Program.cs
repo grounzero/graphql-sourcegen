@@ -32,18 +32,12 @@ namespace GraphQLSourceGen.Samples
                 {
                     Id = "post-123",
                     Title = "GraphQL and C# Source Generators",
-                    // ViewCount might be a different type in the generated code
-                    // ViewCount = 1250,
-                    // Rating might be a different type in the generated code
-                    // Rating = 4.8,
-                    // IsPublished might be a different type in the generated code
-                    // IsPublished = true,
-                    // PublishedAt might be a different type in the generated code
-                    // PublishedAt = DateTime.Now.AddDays(-14),
-                    // Tags might be a different type in the generated code
-                    // Tags = new List<string> { "GraphQL", "C#", "Source Generators" },
-                    // Categories might be a different type in the generated code
-                    // Categories = new List<string> { "Programming", "Web Development" }
+                    ViewCount = 1250,
+                    Rating = 4.8,
+                    IsPublished = true,
+                    PublishedAt = DateTime.Now.AddDays(-14),
+                    Tags = new List<string?> { "GraphQL", "C#", "Source Generators" },
+                    Categories = new List<string> { "Programming", "Web Development" }
                 };
                 
                 Console.WriteLine("\nPost With Stats Fragment:");
@@ -67,8 +61,16 @@ namespace GraphQLSourceGen.Samples
                 // UserDetails fragment
                 try
                 {
-                    var userDetails = Activator.CreateInstance(Type.GetType("GraphQL.Generated.UserDetailsFragment, GraphQLSourceGen.Samples"));
-                    Console.WriteLine("UserDetailsFragment was successfully created!");
+                    var userDetailsType = Type.GetType("GraphQL.Generated.UserDetailsFragment, GraphQLSourceGen.Samples");
+                    if (userDetailsType != null)
+                    {
+                        var userDetails = Activator.CreateInstance(userDetailsType);
+                        Console.WriteLine("UserDetailsFragment was successfully created!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed to find UserDetailsFragment type");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -78,8 +80,16 @@ namespace GraphQLSourceGen.Samples
                 // UserWithPosts fragment
                 try
                 {
-                    var userWithPosts = Activator.CreateInstance(Type.GetType("GraphQL.Generated.UserWithPostsFragment, GraphQLSourceGen.Samples"));
-                    Console.WriteLine("UserWithPostsFragment was successfully created!");
+                    var userWithPostsType = Type.GetType("GraphQL.Generated.UserWithPostsFragment, GraphQLSourceGen.Samples");
+                    if (userWithPostsType != null)
+                    {
+                        var userWithPosts = Activator.CreateInstance(userWithPostsType);
+                        Console.WriteLine("UserWithPostsFragment was successfully created!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed to find UserWithPostsFragment type");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -89,8 +99,16 @@ namespace GraphQLSourceGen.Samples
                 // RequiredUserInfo fragment
                 try
                 {
-                    var requiredUserInfo = Activator.CreateInstance(Type.GetType("GraphQL.Generated.RequiredUserInfoFragment, GraphQLSourceGen.Samples"));
-                    Console.WriteLine("RequiredUserInfoFragment was successfully created!");
+                    var requiredUserInfoType = Type.GetType("GraphQL.Generated.RequiredUserInfoFragment, GraphQLSourceGen.Samples");
+                    if (requiredUserInfoType != null)
+                    {
+                        var requiredUserInfo = Activator.CreateInstance(requiredUserInfoType);
+                        Console.WriteLine("RequiredUserInfoFragment was successfully created!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed to find RequiredUserInfoFragment type");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -100,8 +118,16 @@ namespace GraphQLSourceGen.Samples
                 // UserWithDeprecated fragment
                 try
                 {
-                    var userWithDeprecated = Activator.CreateInstance(Type.GetType("GraphQL.Generated.UserWithDeprecatedFragment, GraphQLSourceGen.Samples"));
-                    Console.WriteLine("UserWithDeprecatedFragment was successfully created!");
+                    var userWithDeprecatedType = Type.GetType("GraphQL.Generated.UserWithDeprecatedFragment, GraphQLSourceGen.Samples");
+                    if (userWithDeprecatedType != null)
+                    {
+                        var userWithDeprecated = Activator.CreateInstance(userWithDeprecatedType);
+                        Console.WriteLine("UserWithDeprecatedFragment was successfully created!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed to find UserWithDeprecatedFragment type");
+                    }
                 }
                 catch (Exception ex)
                 {
