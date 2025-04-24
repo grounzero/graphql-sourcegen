@@ -74,7 +74,34 @@ You can configure the generator using MSBuild properties in your project file:
   <!-- Disable XML documentation comments -->
   <GraphQLSourceGenGenerateDocComments>false</GraphQLSourceGenGenerateDocComments>
 </PropertyGroup>
-```
+
+## XML Documentation Comments
+
+By default, the generator adds XML documentation comments to the generated C# types. These comments provide:
+
+1. **Class-level documentation**: Shows which GraphQL fragment and type the class was generated from
+   ```csharp
+   /// <summary>
+   /// Generated from GraphQL fragment 'UserBasic' on type 'User'
+   /// </summary>
+   ```
+
+2. **Property-level documentation**: Includes the original field name from the GraphQL schema
+   ```csharp
+   /// <summary>
+   /// id
+   /// </summary>
+   public string? Id { get; init; }
+   ```
+
+These comments are automatically extracted from your GraphQL schema files during the build process. If your GraphQL schema includes descriptions for types and fields, those descriptions will also be included in the XML comments.
+
+Benefits of XML documentation comments:
+- Maintains the connection between your C# code and the GraphQL schema
+- Provides IntelliSense documentation when using the generated types
+- Can be used to generate API documentation
+
+You can disable the generation of these comments using the `GraphQLSourceGenGenerateDocComments` property as shown above.
 
 ## Examples
 
