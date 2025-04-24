@@ -1,0 +1,40 @@
+# Post fragment with various scalar types
+fragment PostWithStats on Post {
+  id: ID!
+  title: String!
+  viewCount: Int
+  rating: Float
+  isPublished: Boolean!
+  publishedAt: DateTime
+  tags: [String]
+  categories: [String!]!
+}
+
+# Post fragment with nested comments
+fragment PostWithComments on Post {
+  id
+  title
+  content
+  author {
+    id
+    name
+    email
+  }
+  comments {
+    id
+    text
+    createdAt
+    user {
+      id
+      name
+    }
+    replies {
+      id
+      text
+      user {
+        id
+        name
+      }
+    }
+  }
+}

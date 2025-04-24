@@ -1,0 +1,57 @@
+# Basic user fragment
+fragment UserBasic on User {
+  id
+  name
+  email
+  isActive
+}
+
+# User fragment with nested objects
+fragment UserDetails on User {
+  id
+  name
+  email
+  isActive
+  profile {
+    bio
+    avatarUrl
+    joinDate
+  }
+  posts {
+    id
+    title
+    content
+    createdAt
+  }
+  followers {
+    id
+    name
+  }
+}
+
+# User fragment with deprecated fields
+fragment UserWithDeprecated on User {
+  id
+  name
+  email
+  username @deprecated(reason: "Use email instead")
+  oldField @deprecated
+}
+
+# User fragment with fragment spreads
+fragment UserWithPosts on User {
+  ...UserBasic
+  posts {
+    id
+    title
+    publishedAt
+    comments {
+      id
+      text
+      author {
+        id
+        name
+      }
+    }
+  }
+}
