@@ -71,8 +71,20 @@ namespace GraphQLSourceGen
             // Generate code for each fragment
             foreach (var fragment in allFragments)
             {
-                string generatedCode = GenerateFragmentCode(fragment, allFragments, options);
-                context.AddSource($"{fragment.Name}Fragment.g.cs", SourceText.From(generatedCode, Encoding.UTF8));
+                try
+                {
+                    string generatedCode = GenerateFragmentCode(fragment, allFragments, options);
+                    context.AddSource($"{fragment.Name}Fragment.g.cs", SourceText.From(generatedCode, Encoding.UTF8));
+                }
+                catch (Exception ex)
+                {
+                    // Report diagnostic for code generation error
+                    var diagnostic = Diagnostic.Create(
+                        DiagnosticDescriptors.InvalidGraphQLSyntax,
+                        Location.None,
+                        $"Error generating code for fragment '{fragment.Name}': {ex.Message}");
+                    context.ReportDiagnostic(diagnostic);
+                }
             }
         }
         
@@ -198,47 +210,150 @@ namespace GraphQLSourceGen
             // Generate properties for each field
             foreach (var field in fragment.Fields)
             {
-                GenerateProperty(sb, field, allFragments, indent + "    ", options);
+                try
+                {
+                    GenerateProperty(sb, field, allFragments, indent + "    ", options);
+                }
+                catch (Exception ex)
+                {
+                    // Add a comment about the error instead of failing
+                    sb.AppendLine($"{indent}    // Error generating property for field '{field.Name}': {ex.Message}");
+                }
             }
 
-            // Generate nested classes for complex fields
-            foreach (var field in fragment.Fields.Where(f => f.SelectionSet.Any()))
+            try
             {
-                sb.AppendLine();
-                string nestedTypeName = char.ToUpper(field.Name[0]) + field.Name.Substring(1);
-                
-                if (options.GenerateDocComments)
+                // Generate nested classes for complex fields
+                foreach (var field in fragment.Fields.Where(f => f.SelectionSet != null && f.SelectionSet.Any()))
                 {
-                    sb.AppendLine($"{indent}    /// <summary>");
-                    sb.AppendLine($"{indent}    /// Represents the {field.Name} field of {fragment.Name}");
-                    sb.AppendLine($"{indent}    /// </summary>");
-                }
-                
-                string nestedTypeKeyword = options.UseRecords ? "record" : "class";
-                sb.AppendLine($"{indent}    public {nestedTypeKeyword} {nestedTypeName}Model");
-                sb.AppendLine($"{indent}    {{");
-                
-                // Generate properties for nested fields
-                foreach (var nestedField in field.SelectionSet)
-                {
-                    GenerateProperty(sb, nestedField, allFragments, indent + "        ", options);
-                }
-                
-                // Generate nested classes for nested fields with selection sets
-                foreach (var nestedField in field.SelectionSet.Where(f => f.SelectionSet.Any()))
-                {
-                    sb.AppendLine();
-                    var nestedFragment = new GraphQLFragment
+                    try
                     {
-                        Name = $"{nestedTypeName}_{char.ToUpper(nestedField.Name[0]) + nestedField.Name.Substring(1)}",
-                        OnType = nestedField.Type.Name,
-                        Fields = nestedField.SelectionSet
-                    };
-
-                    GenerateClass(sb, nestedFragment, allFragments, indent + "        ", options);
+                        sb.AppendLine();
+                        string nestedTypeName = char.ToUpper(field.Name[0]) + field.Name.Substring(1);
+                        
+                        if (options.GenerateDocComments)
+                        {
+                            sb.AppendLine($"{indent}    /// <summary>");
+                            sb.AppendLine($"{indent}    /// Represents the {field.Name} field of {fragment.Name}");
+                            sb.AppendLine($"{indent}    /// </summary>");
+                        }
+                        
+                        string nestedTypeKeyword = options.UseRecords ? "record" : "class";
+                        sb.AppendLine($"{indent}    public {nestedTypeKeyword} {nestedTypeName}Model");
+                        sb.AppendLine($"{indent}    {{");
+                        
+                        // Generate properties for nested fields
+                        foreach (var nestedField in field.SelectionSet)
+                        {
+                            try
+                            {
+                                GenerateProperty(sb, nestedField, allFragments, indent + "        ", options);
+                            }
+                            catch (Exception ex)
+                            {
+                                sb.AppendLine($"{indent}        // Error generating property for field '{nestedField.Name}': {ex.Message}");
+                            }
+                        }
+                        
+                        // Generate nested classes for nested fields with selection sets
+                        foreach (var nestedField in field.SelectionSet.Where(f => f.SelectionSet != null && f.SelectionSet.Any()))
+                        {
+                            try
+                            {
+                                sb.AppendLine();
+                                string nestedFieldName = nestedField.Name;
+                                if (string.IsNullOrEmpty(nestedFieldName))
+                                {
+                                    // Skip fields with no name
+                                    continue;
+                                }
+                                
+                                // Use the field name directly for the nested class name
+                                string nestedClassName = char.ToUpper(nestedFieldName[0]) + nestedFieldName.Substring(1);
+                                
+                                if (options.GenerateDocComments)
+                                {
+                                    sb.AppendLine($"{indent}        /// <summary>");
+                                    sb.AppendLine($"{indent}        /// Represents the {nestedFieldName} field");
+                                    sb.AppendLine($"{indent}        /// </summary>");
+                                }
+                                
+                                string nestedClassKeyword = options.UseRecords ? "record" : "class";
+                                sb.AppendLine($"{indent}        public {nestedClassKeyword} {nestedClassName}Model");
+                                sb.AppendLine($"{indent}        {{");
+                                
+                                // Generate properties for the nested fields
+                                foreach (var deepNestedField in nestedField.SelectionSet)
+                                {
+                                    try
+                                    {
+                                        GenerateProperty(sb, deepNestedField, allFragments, indent + "            ", options);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        sb.AppendLine($"{indent}            // Error generating property for field '{deepNestedField.Name}': {ex.Message}");
+                                    }
+                                }
+                                
+                                // Generate nested classes for deeply nested fields
+                                foreach (var deepNestedField in nestedField.SelectionSet.Where(f => f.SelectionSet != null && f.SelectionSet.Any()))
+                                {
+                                    try
+                                    {
+                                        sb.AppendLine();
+                                        string deepNestedClassName = char.ToUpper(deepNestedField.Name[0]) + deepNestedField.Name.Substring(1);
+                                        
+                                        if (options.GenerateDocComments)
+                                        {
+                                            sb.AppendLine($"{indent}            /// <summary>");
+                                            sb.AppendLine($"{indent}            /// Represents the {deepNestedField.Name} field");
+                                            sb.AppendLine($"{indent}            /// </summary>");
+                                        }
+                                        
+                                        string deepNestedClassKeyword = options.UseRecords ? "record" : "class";
+                                        sb.AppendLine($"{indent}            public {deepNestedClassKeyword} {deepNestedClassName}Model");
+                                        sb.AppendLine($"{indent}            {{");
+                                        
+                                        // Generate properties for the deeply nested fields
+                                        foreach (var veryDeepNestedField in deepNestedField.SelectionSet)
+                                        {
+                                            try
+                                            {
+                                                GenerateProperty(sb, veryDeepNestedField, allFragments, indent + "                ", options);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                sb.AppendLine($"{indent}                // Error generating property for field '{veryDeepNestedField.Name}': {ex.Message}");
+                                            }
+                                        }
+                                        
+                                        sb.AppendLine($"{indent}            }}");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        sb.AppendLine($"{indent}            // Error generating nested class for field '{deepNestedField.Name}': {ex.Message}");
+                                    }
+                                }
+                                
+                                sb.AppendLine($"{indent}        }}");
+                            }
+                            catch (Exception ex)
+                            {
+                                sb.AppendLine($"{indent}        // Error generating nested class for field '{nestedField.Name}': {ex.Message}");
+                            }
+                        }
+                        
+                        sb.AppendLine($"{indent}    }}");
+                    }
+                    catch (Exception ex)
+                    {
+                        sb.AppendLine($"{indent}    // Error generating nested class for field '{field.Name}': {ex.Message}");
+                    }
                 }
-                
-                sb.AppendLine($"{indent}    }}");
+            }
+            catch (Exception ex)
+            {
+                sb.AppendLine($"{indent}// Error generating nested classes: {ex.Message}");
             }
 
             // Close class or record
@@ -247,61 +362,75 @@ namespace GraphQLSourceGen
 
         void GenerateProperty(StringBuilder sb, GraphQLField field, List<GraphQLFragment> allFragments, string indent, GraphQLSourceGenOptions options)
         {
-            // Add XML documentation
-            if (options.GenerateDocComments)
+            try
             {
-                sb.AppendLine($"{indent}/// <summary>");
-                sb.AppendLine($"{indent}/// {field.Name}");
-                sb.AppendLine($"{indent}/// </summary>");
-            }
-
-            // Add [Obsolete] attribute if the field is deprecated
-            if (field.IsDeprecated)
-            {
-                string reason = field.DeprecationReason != null
-                    ? $", \"{field.DeprecationReason}\""
-                    : string.Empty;
-                sb.AppendLine($"{indent}[Obsolete(\"This field is deprecated{reason}\")]");
-            }
-
-            // Determine property type
-            string propertyType;
-            if (field.SelectionSet.Any())
-            {
-                // For fields with selection sets, use a nested type
-                string typeName = char.ToUpper(field.Name[0]) + field.Name.Substring(1);
-                bool isList = field.Type.IsList;
-                bool isNullable = field.Type.IsNullable;
-
-                if (isList)
+                // Skip fields with empty names
+                if (string.IsNullOrWhiteSpace(field.Name))
                 {
-                    propertyType = $"List<{typeName}Model>{(isNullable ? "?" : "")}";
+                    return;
+                }
+
+                // Add XML documentation
+                if (options.GenerateDocComments)
+                {
+                    sb.AppendLine($"{indent}/// <summary>");
+                    sb.AppendLine($"{indent}/// {field.Name}");
+                    sb.AppendLine($"{indent}/// </summary>");
+                }
+
+                // Add [Obsolete] attribute if the field is deprecated
+                if (field.IsDeprecated)
+                {
+                    string reason = field.DeprecationReason != null
+                        ? $", \"{field.DeprecationReason}\""
+                        : string.Empty;
+                    sb.AppendLine($"{indent}[Obsolete(\"This field is deprecated{reason}\")]");
+                }
+
+                // Determine property type
+                string propertyType;
+                if (field.SelectionSet != null && field.SelectionSet.Any())
+                {
+                    // For fields with selection sets, use a nested type
+                    string typeName = char.ToUpper(field.Name[0]) + field.Name.Substring(1);
+                    bool isList = field.Type?.IsList ?? false;
+                    bool isNullable = field.Type?.IsNullable ?? true;
+
+                    if (isList)
+                    {
+                        propertyType = $"List<{typeName}Model>{(isNullable ? "?" : "")}";
+                    }
+                    else
+                    {
+                        propertyType = $"{typeName}Model{(isNullable ? "?" : "")}";
+                    }
+                }
+                else if (field.FragmentSpreads != null && field.FragmentSpreads.Any())
+                {
+                    // For fragment spreads, use the fragment type
+                    string spreadName = field.FragmentSpreads.First();
+                    propertyType = $"{spreadName}Fragment";
+                    if (field.Type?.IsNullable ?? true)
+                    {
+                        propertyType += "?";
+                    }
                 }
                 else
                 {
-                    propertyType = $"{typeName}Model{(isNullable ? "?" : "")}";
+                    // For scalar fields, map to C# types
+                    propertyType = GraphQLParser.MapToCSharpType(field.Type ?? new GraphQLType { Name = "String", IsNullable = true });
                 }
-            }
-            else if (field.FragmentSpreads.Any())
-            {
-                // For fragment spreads, use the fragment type
-                string spreadName = field.FragmentSpreads.First();
-                propertyType = $"{spreadName}Fragment";
-                if (field.Type.IsNullable)
-                {
-                    propertyType += "?";
-                }
-            }
-            else
-            {
-                // For scalar fields, map to C# types
-                propertyType = GraphQLParser.MapToCSharpType(field.Type);
-            }
 
-            // Generate the property
-            string propertyName = char.ToUpper(field.Name[0]) + field.Name.Substring(1);
-            string accessors = options.UseInitProperties ? "{ get; init; }" : "{ get; set; }";
-            sb.AppendLine($"{indent}public {propertyType} {propertyName} {accessors}");
+                // Generate the property
+                string propertyName = char.ToUpper(field.Name[0]) + field.Name.Substring(1);
+                string accessors = options.UseInitProperties ? "{ get; init; }" : "{ get; set; }";
+                sb.AppendLine($"{indent}public {propertyType} {propertyName} {accessors}");
+            }
+            catch (Exception ex)
+            {
+                // Add a comment about the error instead of failing
+                sb.AppendLine($"{indent}// Error generating property: {ex.Message}");
+            }
         }
     }
 }

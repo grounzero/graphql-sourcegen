@@ -1,30 +1,13 @@
 using GraphQLSourceGen.Models;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace GraphQLSourceGen.Parsing
 {
     /// <summary>
-    /// A simple parser for GraphQL fragments
+    /// A robust parser for GraphQL fragments
     /// </summary>
     public class GraphQLParser
     {
-        static readonly Regex FragmentRegex = new Regex(
-            @"fragment\s+(?<name>\w+)\s+on\s+(?<type>\w+)\s*{(?<body>[^}]*)}",
-            RegexOptions.Compiled | RegexOptions.Singleline);
-
-        static readonly Regex FieldRegex = new Regex(
-            @"(?<name>\w+)(?:\s*\(.*?\))?\s*(?::(?<type>[^\s{,]*))?\s*(?<selection>{[^}]*})?(?<deprecated>@deprecated(?:\(reason:\s*""(?<reason>[^""]*)""\))?)?",
-            RegexOptions.Compiled | RegexOptions.Singleline);
-
-        static readonly Regex FragmentSpreadRegex = new Regex(
-            @"\.\.\.\s*(?<name>\w+)",
-            RegexOptions.Compiled);
-            
-        static readonly Regex LineWithFragmentSpreadRegex = new Regex(
-            @"^\s*\.\.\.\s*(?<name>\w+)\s*$",
-            RegexOptions.Compiled | RegexOptions.Multiline);
-
         static readonly Dictionary<string, string> ScalarMappings = new Dictionary<string, string>
         {
             { "String", "string" },
@@ -52,293 +35,394 @@ namespace GraphQLSourceGen.Parsing
         /// </summary>
         public static List<GraphQLFragment> ParseContent(string content)
         {
-            // Special case for the nested objects test
-            if (content.Contains("fragment UserDetails on User") && content.Contains("profile {"))
+            try
             {
-                var fragment = new GraphQLFragment
+                var fragments = new List<GraphQLFragment>();
+                if (string.IsNullOrWhiteSpace(content))
                 {
-                    Name = "UserDetails",
-                    OnType = "User",
-                    Fields = new List<GraphQLField>
-                    {
-                        new GraphQLField { Name = "id", Type = new GraphQLType { Name = "String", IsNullable = true } },
-                        new GraphQLField
-                        {
-                            Name = "profile",
-                            Type = new GraphQLType { Name = "Profile", IsNullable = true },
-                            SelectionSet = new List<GraphQLField>
-                            {
-                                new GraphQLField { Name = "bio", Type = new GraphQLType { Name = "String", IsNullable = true } },
-                                new GraphQLField { Name = "avatarUrl", Type = new GraphQLType { Name = "String", IsNullable = true } }
-                            }
-                        }
-                    }
-                };
-                
-                return new List<GraphQLFragment> { fragment };
-            }
-            
-            // Special case for the fragment spreads test
-            if (content.Contains("fragment UserWithPosts on User") && content.Contains("...UserBasic"))
-            {
-                var fragmentSpreadField = new GraphQLField();
-                fragmentSpreadField.FragmentSpreads.Add("UserBasic");
-                
-                var fragment = new GraphQLFragment
-                {
-                    Name = "UserWithPosts",
-                    OnType = "User",
-                    Fields = new List<GraphQLField>
-                    {
-                        fragmentSpreadField,
-                        new GraphQLField
-                        {
-                            Name = "posts",
-                            Type = new GraphQLType { Name = "Post", IsNullable = true, IsList = true },
-                            SelectionSet = new List<GraphQLField>
-                            {
-                                new GraphQLField { Name = "id", Type = new GraphQLType { Name = "String", IsNullable = true } },
-                                new GraphQLField { Name = "title", Type = new GraphQLType { Name = "String", IsNullable = true } }
-                            }
-                        }
-                    }
-                };
-                
-                return new List<GraphQLFragment> { fragment };
-            }
-            
-            // Special case for the deprecated fields test
-            if (content.Contains("fragment UserWithDeprecated on User") && content.Contains("@deprecated"))
-            {
-                var fragment = new GraphQLFragment
-                {
-                    Name = "UserWithDeprecated",
-                    OnType = "User",
-                    Fields = new List<GraphQLField>
-                    {
-                        new GraphQLField { Name = "id", Type = new GraphQLType { Name = "String", IsNullable = true } },
-                        new GraphQLField
-                        {
-                            Name = "username",
-                            Type = new GraphQLType { Name = "String", IsNullable = true },
-                            IsDeprecated = true,
-                            DeprecationReason = "Use email instead"
-                        },
-                        new GraphQLField
-                        {
-                            Name = "oldField",
-                            Type = new GraphQLType { Name = "String", IsNullable = true },
-                            IsDeprecated = true
-                        }
-                    }
-                };
-                
-                return new List<GraphQLFragment> { fragment };
-            }
-            
-            // Special case for the scalar types test
-            if (content.Contains("fragment PostWithStats on Post") && content.Contains("categories: [String!]!"))
-            {
-                var fragment = new GraphQLFragment
-                {
-                    Name = "PostWithStats",
-                    OnType = "Post",
-                    Fields = new List<GraphQLField>
-                    {
-                        new GraphQLField { Name = "id", Type = new GraphQLType { Name = "ID", IsNullable = false } },
-                        new GraphQLField { Name = "title", Type = new GraphQLType { Name = "String", IsNullable = false } },
-                        new GraphQLField { Name = "viewCount", Type = new GraphQLType { Name = "Int", IsNullable = true } },
-                        new GraphQLField { Name = "rating", Type = new GraphQLType { Name = "Float", IsNullable = true } },
-                        new GraphQLField { Name = "isPublished", Type = new GraphQLType { Name = "Boolean", IsNullable = false } },
-                        new GraphQLField { Name = "publishedAt", Type = new GraphQLType { Name = "DateTime", IsNullable = true } },
-                        new GraphQLField
-                        {
-                            Name = "tags",
-                            Type = new GraphQLType
-                            {
-                                IsList = true,
-                                IsNullable = true,
-                                OfType = new GraphQLType { Name = "String", IsNullable = true }
-                            }
-                        },
-                        new GraphQLField
-                        {
-                            Name = "categories",
-                            Type = new GraphQLType
-                            {
-                                IsList = true,
-                                IsNullable = false,
-                                OfType = new GraphQLType { Name = "String", IsNullable = false }
-                            }
-                        }
-                    }
-                };
-                
-                return new List<GraphQLFragment> { fragment };
-            }
-            
-            // Regular parsing for other cases
-            var fragments = new List<GraphQLFragment>();
-            var matches = FragmentRegex.Matches(content);
+                    return fragments;
+                }
 
-            foreach (Match match in matches)
-            {
-                var fragment = new GraphQLFragment
+                // Tokenize the content
+                var tokens = Tokenize(content);
+                int position = 0;
+
+                // Parse fragments
+                while (position < tokens.Count)
                 {
-                    Name = match.Groups["name"].Value,
-                    OnType = match.Groups["type"].Value,
-                    Fields = ParseFields(match.Groups["body"].Value)
-                };
+                    if (position + 3 < tokens.Count &&
+                        tokens[position].Value == "fragment" &&
+                        tokens[position + 2].Value == "on")
+                    {
+                        try
+                        {
+                            var fragment = ParseFragment(tokens, ref position);
+                            if (fragment != null)
+                            {
+                                fragments.Add(fragment);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error parsing fragment: {ex.Message}");
+                            // Skip to next fragment
+                            while (position < tokens.Count && tokens[position].Value != "fragment")
+                            {
+                                position++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        position++;
+                    }
+                }
 
-                fragments.Add(fragment);
+                return fragments;
             }
-
-            return fragments;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error parsing GraphQL content: {ex.Message}");
+                return new List<GraphQLFragment>();
+            }
         }
 
         /// <summary>
-        /// Parse fields from a GraphQL selection set
+        /// Tokenize GraphQL content
         /// </summary>
-        static List<GraphQLField> ParseFields(string selectionSet)
+        private static List<Token> Tokenize(string content)
         {
-            var fields = new List<GraphQLField>();
-            
-            // Split the selection set into lines
-            string[] lines = selectionSet.Split('\n');
-            
-            // Process each line
-            for (int i = 0; i < lines.Length; i++)
+            var tokens = new List<Token>();
+            int position = 0;
+
+            while (position < content.Length)
             {
-                string line = lines[i].Trim();
-                
-                // Skip empty lines
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-                
-                // Check if this is a fragment spread
-                if (line.StartsWith("..."))
+                char c = content[position];
+
+                // Skip whitespace
+                if (char.IsWhiteSpace(c))
                 {
-                    string fragmentName = line.Substring(3).Trim();
-                    var spreadField = new GraphQLField();
-                    spreadField.FragmentSpreads.Add(fragmentName);
-                    fields.Add(spreadField);
+                    position++;
                     continue;
                 }
-                
-                // Check if this is a field
-                int colonIndex = line.IndexOf(':');
-                int openBraceIndex = line.IndexOf('{');
-                
-                string fieldName;
-                string fieldType = "";
-                bool hasNestedSelection = false;
-                
-                // Extract field name
-                if (colonIndex > 0 && (openBraceIndex == -1 || colonIndex < openBraceIndex))
+
+                // Skip comments
+                if (c == '#')
                 {
-                    // Field with type annotation
-                    fieldName = line.Substring(0, colonIndex).Trim();
-                    
-                    // Extract type
-                    int endTypeIndex = openBraceIndex > 0 ? openBraceIndex : line.Length;
-                    fieldType = line.Substring(colonIndex + 1, endTypeIndex - colonIndex - 1).Trim();
-                }
-                else if (openBraceIndex > 0)
-                {
-                    // Field with nested selection
-                    fieldName = line.Substring(0, openBraceIndex).Trim();
-                    hasNestedSelection = true;
-                }
-                else
-                {
-                    // Simple field
-                    fieldName = line.Trim();
-                    
-                    // Check if the field has a deprecated directive
-                    int atIndex = fieldName.IndexOf('@');
-                    if (atIndex > 0)
+                    while (position < content.Length && content[position] != '\n')
                     {
-                        fieldName = fieldName.Substring(0, atIndex).Trim();
+                        position++;
                     }
+                    continue;
                 }
-                
-                // Create the field
-                var field = new GraphQLField
+
+                // Handle punctuation
+                if (c == '{' || c == '}' || c == ':' || c == '!' || c == '@' || c == '[' || c == ']')
                 {
-                    Name = fieldName,
-                    Type = ParseType(fieldType),
-                };
-                
-                // Check for deprecated directive
-                if (line.Contains("@deprecated"))
+                    tokens.Add(new Token { Type = TokenType.Punctuation, Value = c.ToString() });
+                    position++;
+                    continue;
+                }
+
+                // Handle fragment spread
+                if (c == '.' && position + 2 < content.Length && content[position + 1] == '.' && content[position + 2] == '.')
                 {
-                    field.IsDeprecated = true;
-                    
-                    // Check for deprecation reason
-                    int reasonStart = line.IndexOf("reason:");
-                    if (reasonStart > 0)
+                    tokens.Add(new Token { Type = TokenType.Spread, Value = "..." });
+                    position += 3;
+                    continue;
+                }
+
+                // Handle strings
+                if (c == '"')
+                {
+                    int start = position;
+                    position++; // Skip opening quote
+                    while (position < content.Length && content[position] != '"')
                     {
-                        int quoteStart = line.IndexOf('"', reasonStart);
-                        int quoteEnd = line.IndexOf('"', quoteStart + 1);
-                        if (quoteStart > 0 && quoteEnd > quoteStart)
+                        // Handle escaped quotes
+                        if (content[position] == '\\' && position + 1 < content.Length && content[position + 1] == '"')
                         {
-                            field.DeprecationReason = line.Substring(quoteStart + 1, quoteEnd - quoteStart - 1);
+                            position += 2;
+                        }
+                        else
+                        {
+                            position++;
                         }
                     }
+                    position++; // Skip closing quote
+                    tokens.Add(new Token { Type = TokenType.String, Value = content.Substring(start, position - start) });
+                    continue;
                 }
-                
-                // Handle nested selection
-                if (hasNestedSelection)
+
+                // Handle identifiers and keywords
+                if (char.IsLetter(c) || c == '_')
                 {
-                    // Find the closing brace
-                    int depth = 0;
-                    int startLine = i;
-                    int endLine = i;
-                    
-                    for (int j = i; j < lines.Length; j++)
+                    int start = position;
+                    while (position < content.Length && (char.IsLetterOrDigit(content[position]) || content[position] == '_'))
                     {
-                        string currentLine = lines[j].Trim();
-                        
-                        for (int k = 0; k < currentLine.Length; k++)
+                        position++;
+                    }
+                    string value = content.Substring(start, position - start);
+                    tokens.Add(new Token { Type = TokenType.Identifier, Value = value });
+                    continue;
+                }
+
+                // Skip any other character
+                position++;
+            }
+
+            return tokens;
+        }
+
+        /// <summary>
+        /// Parse a GraphQL fragment
+        /// </summary>
+        private static GraphQLFragment ParseFragment(List<Token> tokens, ref int position)
+        {
+            // fragment Name on Type { ... }
+            if (tokens[position].Value != "fragment")
+            {
+                throw new Exception("Expected 'fragment' keyword");
+            }
+            position++; // Skip 'fragment'
+
+            // Get fragment name
+            if (position >= tokens.Count || tokens[position].Type != TokenType.Identifier)
+            {
+                throw new Exception("Expected fragment name");
+            }
+            string fragmentName = tokens[position].Value;
+            position++; // Skip fragment name
+
+            // Expect 'on' keyword
+            if (position >= tokens.Count || tokens[position].Value != "on")
+            {
+                throw new Exception("Expected 'on' keyword");
+            }
+            position++; // Skip 'on'
+
+            // Get type name
+            if (position >= tokens.Count || tokens[position].Type != TokenType.Identifier)
+            {
+                throw new Exception("Expected type name");
+            }
+            string typeName = tokens[position].Value;
+            position++; // Skip type name
+
+            // Expect opening brace
+            if (position >= tokens.Count || tokens[position].Value != "{")
+            {
+                throw new Exception("Expected '{'");
+            }
+            position++; // Skip '{'
+
+            // Parse fields
+            var fields = ParseSelectionSet(tokens, ref position);
+
+            // Create and return the fragment
+            return new GraphQLFragment
+            {
+                Name = fragmentName,
+                OnType = typeName,
+                Fields = fields
+            };
+        }
+
+        /// <summary>
+        /// Parse a GraphQL selection set
+        /// </summary>
+        private static List<GraphQLField> ParseSelectionSet(List<Token> tokens, ref int position)
+        {
+            var fields = new List<GraphQLField>();
+
+            // Parse fields until closing brace
+            while (position < tokens.Count && tokens[position].Value != "}")
+            {
+                try
+                {
+                    // Check for fragment spread
+                    if (tokens[position].Value == "...")
+                    {
+                        position++; // Skip '...'
+                        if (position < tokens.Count && tokens[position].Type == TokenType.Identifier)
                         {
-                            if (currentLine[k] == '{')
-                                depth++;
-                            else if (currentLine[k] == '}')
+                            var spreadField = new GraphQLField();
+                            spreadField.FragmentSpreads.Add(tokens[position].Value);
+                            fields.Add(spreadField);
+                            position++; // Skip fragment name
+                        }
+                        else
+                        {
+                            throw new Exception("Expected fragment name after spread operator");
+                        }
+                    }
+                    // Parse field
+                    else if (tokens[position].Type == TokenType.Identifier)
+                    {
+                        fields.Add(ParseField(tokens, ref position));
+                    }
+                    else
+                    {
+                        // Skip unexpected token
+                        position++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error parsing field: {ex.Message}");
+                    // Skip to next field or closing brace
+                    while (position < tokens.Count &&
+                           tokens[position].Type != TokenType.Identifier &&
+                           tokens[position].Value != "}" &&
+                           tokens[position].Value != "...")
+                    {
+                        position++;
+                    }
+                }
+            }
+
+            // Skip closing brace
+            if (position < tokens.Count && tokens[position].Value == "}")
+            {
+                position++;
+            }
+
+            return fields;
+        }
+
+        /// <summary>
+        /// Parse a GraphQL field
+        /// </summary>
+        private static GraphQLField ParseField(List<Token> tokens, ref int position)
+        {
+            // Get field name
+            string fieldName = tokens[position].Value;
+            position++; // Skip field name
+
+            // Check for arguments (skip them for now)
+            if (position < tokens.Count && tokens[position].Value == "(")
+            {
+                int depth = 1;
+                position++; // Skip '('
+                while (position < tokens.Count && depth > 0)
+                {
+                    if (tokens[position].Value == "(")
+                    {
+                        depth++;
+                    }
+                    else if (tokens[position].Value == ")")
+                    {
+                        depth--;
+                    }
+                    position++;
+                }
+            }
+
+            // Check for type annotation
+            string fieldType = "";
+            if (position < tokens.Count && tokens[position].Value == ":")
+            {
+                position++; // Skip ':'
+                fieldType = ParseTypeAnnotation(tokens, ref position);
+            }
+
+            // Create the field
+            var field = new GraphQLField
+            {
+                Name = fieldName,
+                Type = ParseType(fieldType)
+            };
+
+            // Check for nested selection
+            if (position < tokens.Count && tokens[position].Value == "{")
+            {
+                position++; // Skip '{'
+                field.SelectionSet = ParseSelectionSet(tokens, ref position);
+            }
+
+            // Check for deprecated directive
+            if (position < tokens.Count && tokens[position].Value == "@")
+            {
+                position++; // Skip '@'
+                if (position < tokens.Count && tokens[position].Value == "deprecated")
+                {
+                    field.IsDeprecated = true;
+                    position++; // Skip 'deprecated'
+
+                    // Check for reason
+                    if (position < tokens.Count && tokens[position].Value == "(")
+                    {
+                        position++; // Skip '('
+                        if (position < tokens.Count && tokens[position].Value == "reason")
+                        {
+                            position++; // Skip 'reason'
+                            if (position < tokens.Count && tokens[position].Value == ":")
                             {
-                                depth--;
-                                if (depth == 0)
+                                position++; // Skip ':'
+                                if (position < tokens.Count && tokens[position].Type == TokenType.String)
                                 {
-                                    endLine = j;
-                                    break;
+                                    // Extract reason from quoted string
+                                    string quotedReason = tokens[position].Value;
+                                    field.DeprecationReason = quotedReason.Substring(1, quotedReason.Length - 2);
+                                    position++; // Skip reason string
                                 }
                             }
                         }
-                        
-                        if (depth == 0)
-                            break;
-                    }
-                    
-                    // Extract the nested selection
-                    if (endLine > startLine)
-                    {
-                        StringBuilder nestedSelectionBuilder = new StringBuilder();
-                        for (int j = startLine + 1; j < endLine; j++)
+
+                        // Skip to closing parenthesis
+                        while (position < tokens.Count && tokens[position].Value != ")")
                         {
-                            nestedSelectionBuilder.AppendLine(lines[j]);
+                            position++;
                         }
-                        
-                        string nestedSelection = nestedSelectionBuilder.ToString();
-                        field.SelectionSet = ParseFields(nestedSelection);
-                        
-                        // Skip the processed lines
-                        i = endLine;
+                        if (position < tokens.Count)
+                        {
+                            position++; // Skip ')'
+                        }
                     }
                 }
+            }
+
+            return field;
+        }
+
+        /// <summary>
+        /// Parse a GraphQL type annotation
+        /// </summary>
+        private static string ParseTypeAnnotation(List<Token> tokens, ref int position)
+        {
+            StringBuilder typeBuilder = new StringBuilder();
+            
+            // Handle list type
+            if (position < tokens.Count && tokens[position].Value == "[")
+            {
+                typeBuilder.Append('[');
+                position++; // Skip '['
                 
-                fields.Add(field);
+                // Parse inner type
+                typeBuilder.Append(ParseTypeAnnotation(tokens, ref position));
+                
+                // Expect closing bracket
+                if (position < tokens.Count && tokens[position].Value == "]")
+                {
+                    typeBuilder.Append(']');
+                    position++; // Skip ']'
+                }
+            }
+            // Handle named type
+            else if (position < tokens.Count && tokens[position].Type == TokenType.Identifier)
+            {
+                typeBuilder.Append(tokens[position].Value);
+                position++; // Skip type name
             }
             
-            return fields;
+            // Handle non-null
+            if (position < tokens.Count && tokens[position].Value == "!")
+            {
+                typeBuilder.Append('!');
+                position++; // Skip '!'
+            }
+            
+            return typeBuilder.ToString();
         }
 
         /// <summary>
@@ -401,5 +485,25 @@ namespace GraphQLSourceGen.Parsing
 
             return $"{csharpType}{(type.IsNullable ? "?" : "")}";
         }
+    }
+
+    /// <summary>
+    /// Token types for the GraphQL lexer
+    /// </summary>
+    enum TokenType
+    {
+        Identifier,
+        Punctuation,
+        String,
+        Spread
+    }
+
+    /// <summary>
+    /// Token for the GraphQL lexer
+    /// </summary>
+    class Token
+    {
+        public TokenType Type { get; set; }
+        public string Value { get; set; } = string.Empty;
     }
 }
