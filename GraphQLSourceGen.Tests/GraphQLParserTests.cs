@@ -222,7 +222,7 @@ namespace GraphQLSourceGen.Tests
             if (fragment.Fields[7].Type.IsNullable) // categories: [String!]! (non-nullable list)
                 throw new Exception("Expected categories field to be a non-nullable list");
 
-            if (fragment.Fields[7].Type.OfType.IsNullable) // [String!] (non-nullable items)
+            if (fragment.Fields[7].Type.OfType?.IsNullable == true) // [String!] (non-nullable items)
                 throw new Exception("Expected categories list items to be non-nullable");
         }
 
