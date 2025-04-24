@@ -32,6 +32,13 @@ namespace GraphQLSourceGen
                 return;
             }
 
+            // Parse schema if schema files are specified
+            GraphQLSchema? schema = null;
+            if (options.UseSchemaForTypeInference && options.SchemaFilePaths.Any())
+            {
+                schema = ParseSchemaFiles(context, options.SchemaFilePaths);
+            }
+
             // Parse all fragments from all files
             var allFragments = new List<GraphQLFragment>();
             foreach (var file in graphqlFiles)
@@ -63,6 +70,12 @@ namespace GraphQLSourceGen
                         ex.Message);
                     context.ReportDiagnostic(diagnostic);
                 }
+            }
+
+            // Enhance fragments with schema information if available
+            if (schema != null)
+            {
+                EnhanceFragmentsWithSchema(allFragments, schema);
             }
 
             // Validate fragment names and references
@@ -165,7 +178,245 @@ namespace GraphQLSourceGen
                 options.GenerateDocComments = bool.TryParse(generateDocComments, out var value) && value;
             }
 
+            if (context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.GraphQLSourceGenUseSchemaForTypeInference", out var useSchemaForTypeInference))
+            {
+                options.UseSchemaForTypeInference = bool.TryParse(useSchemaForTypeInference, out var value) && value;
+            }
+
+            if (context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.GraphQLSourceGenValidateNonNullableFields", out var validateNonNullableFields))
+            {
+                options.ValidateNonNullableFields = bool.TryParse(validateNonNullableFields, out var value) && value;
+            }
+
+            if (context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.GraphQLSourceGenIncludeFieldDescriptions", out var includeFieldDescriptions))
+            {
+                options.IncludeFieldDescriptions = bool.TryParse(includeFieldDescriptions, out var value) && value;
+            }
+
+            // Read schema file paths
+            if (context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.GraphQLSourceGenSchemaFiles", out var schemaFiles))
+            {
+                if (!string.IsNullOrWhiteSpace(schemaFiles))
+                {
+                    options.SchemaFilePaths = schemaFiles.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                }
+            }
+
+            // Read custom scalar mappings
+            if (context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.GraphQLSourceGenCustomScalarMappings", out var customScalarMappings))
+            {
+                if (!string.IsNullOrWhiteSpace(customScalarMappings))
+                {
+                    var mappings = customScalarMappings.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var mapping in mappings)
+                    {
+                        var parts = mapping.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (parts.Length == 2)
+                        {
+                            options.CustomScalarMappings[parts[0].Trim()] = parts[1].Trim();
+                        }
+                    }
+                }
+            }
+
             return options;
+        }
+
+        /// <summary>
+        /// Parse schema files and combine them into a single schema
+        /// </summary>
+        private GraphQLSchema ParseSchemaFiles(GeneratorExecutionContext context, List<string> schemaFilePaths)
+        {
+            var schema = new GraphQLSchema();
+
+            foreach (var schemaFilePath in schemaFilePaths)
+            {
+                try
+                {
+                    // Find the schema file in the additional files
+                    var schemaFile = context.AdditionalFiles
+                        .FirstOrDefault(file => file.Path.EndsWith(schemaFilePath, StringComparison.OrdinalIgnoreCase));
+
+                    if (schemaFile != null)
+                    {
+                        var schemaContent = schemaFile.GetText()?.ToString() ?? string.Empty;
+                        var parsedSchema = Parsing.GraphQLSchemaParser.ParseSchema(schemaContent);
+
+                        // Merge the parsed schema into the combined schema
+                        MergeSchemas(schema, parsedSchema);
+                    }
+                    else
+                    {
+                        // Report diagnostic for schema file not found
+                        var diagnostic = Diagnostic.Create(
+                            DiagnosticDescriptors.SchemaFileNotFound,
+                            Location.None,
+                            schemaFilePath);
+                        context.ReportDiagnostic(diagnostic);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Report diagnostic for schema parsing error
+                    var diagnostic = Diagnostic.Create(
+                        DiagnosticDescriptors.InvalidSchemaDefinition,
+                        Location.None,
+                        ex.Message);
+                    context.ReportDiagnostic(diagnostic);
+                }
+            }
+
+            return schema;
+        }
+
+        /// <summary>
+        /// Merge two schemas together
+        /// </summary>
+        private void MergeSchemas(GraphQLSchema target, GraphQLSchema source)
+        {
+            // Merge types
+            foreach (var type in source.Types)
+            {
+                target.Types[type.Key] = type.Value;
+            }
+
+            // Merge interfaces
+            foreach (var iface in source.Interfaces)
+            {
+                target.Interfaces[iface.Key] = iface.Value;
+            }
+
+            // Merge unions
+            foreach (var union in source.Unions)
+            {
+                target.Unions[union.Key] = union.Value;
+            }
+
+            // Merge enums
+            foreach (var enumDef in source.Enums)
+            {
+                target.Enums[enumDef.Key] = enumDef.Value;
+            }
+
+            // Merge input types
+            foreach (var input in source.InputTypes)
+            {
+                target.InputTypes[input.Key] = input.Value;
+            }
+
+            // Merge scalar types
+            foreach (var scalar in source.ScalarTypes)
+            {
+                target.ScalarTypes[scalar.Key] = scalar.Value;
+            }
+
+            // Set operation type names if not already set
+            if (target.QueryTypeName == null)
+            {
+                target.QueryTypeName = source.QueryTypeName;
+            }
+
+            if (target.MutationTypeName == null)
+            {
+                target.MutationTypeName = source.MutationTypeName;
+            }
+
+            if (target.SubscriptionTypeName == null)
+            {
+                target.SubscriptionTypeName = source.SubscriptionTypeName;
+            }
+        }
+
+        /// <summary>
+        /// Enhance fragments with schema information
+        /// </summary>
+        private void EnhanceFragmentsWithSchema(List<GraphQLFragment> fragments, GraphQLSchema schema)
+        {
+            foreach (var fragment in fragments)
+            {
+                // Skip if the fragment's type doesn't exist in the schema
+                if (!schema.Types.ContainsKey(fragment.OnType) &&
+                    !schema.Interfaces.ContainsKey(fragment.OnType) &&
+                    !schema.Unions.ContainsKey(fragment.OnType))
+                {
+                    continue;
+                }
+
+                // Enhance fields with schema information
+                EnhanceFieldsWithSchema(fragment.Fields, fragment.OnType, schema);
+            }
+        }
+
+        /// <summary>
+        /// Enhance fields with schema information
+        /// </summary>
+        private void EnhanceFieldsWithSchema(List<GraphQLField> fields, string parentTypeName, GraphQLSchema schema)
+        {
+            foreach (var field in fields)
+            {
+                // Handle fields with fragment spreads
+                if (field.FragmentSpreads.Any())
+                {
+                    // We still need to set the type for fields with fragment spreads
+                    // This is important for proper type inference in complex nested structures
+                    var fragmentFieldDef = schema.GetFieldDefinition(parentTypeName, field.Name);
+                    if (fragmentFieldDef != null)
+                    {
+                        field.Type = fragmentFieldDef.Type;
+                    }
+                    continue;
+                }
+
+                // Get field definition from schema
+                var fieldDefinition = schema.GetFieldDefinition(parentTypeName, field.Name);
+                if (fieldDefinition != null)
+                {
+                    // Update field type information
+                    field.Type = fieldDefinition.Type;
+
+                    // Update deprecation information if not already set
+                    if (!field.IsDeprecated)
+                    {
+                        field.IsDeprecated = fieldDefinition.IsDeprecated;
+                        field.DeprecationReason = fieldDefinition.DeprecationReason;
+                    }
+
+                    // Recursively enhance nested fields
+                    if (field.SelectionSet.Any() && fieldDefinition.Type != null)
+                    {
+                        string nestedTypeName = GetTypeName(fieldDefinition.Type);
+                        
+                        // Handle interface and union types
+                        if (schema.Interfaces.ContainsKey(nestedTypeName))
+                        {
+                            // For interfaces, we need to check the implementing types
+                            EnhanceFieldsWithSchema(field.SelectionSet, nestedTypeName, schema);
+                        }
+                        else if (schema.Unions.ContainsKey(nestedTypeName))
+                        {
+                            // For unions, we need to check all possible types
+                            EnhanceFieldsWithSchema(field.SelectionSet, nestedTypeName, schema);
+                        }
+                        else
+                        {
+                            // For regular types
+                            EnhanceFieldsWithSchema(field.SelectionSet, nestedTypeName, schema);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get the base type name from a GraphQL type
+        /// </summary>
+        private string GetTypeName(GraphQLType type)
+        {
+            if (type.IsList && type.OfType != null)
+            {
+                return GetTypeName(type.OfType);
+            }
+            return type.Name;
         }
 
         string GenerateFragmentCode(GraphQLFragment fragment, List<GraphQLFragment> allFragments, GraphQLSourceGenOptions options)
@@ -414,7 +665,7 @@ namespace GraphQLSourceGen
                 else
                 {
                     // For scalar fields, map to C# types and make them nullable
-                    var baseType = GraphQLParser.MapToCSharpType(field.Type ?? new GraphQLType { Name = "String", IsNullable = true });
+                    var baseType = MapToCSharpType(field.Type ?? new GraphQLType { Name = "String", IsNullable = true }, options);
                     
                     // If it's not already nullable and not a value type, make it nullable
                     if (!baseType.EndsWith("?") && !IsValueType(baseType))
@@ -460,6 +711,38 @@ namespace GraphQLSourceGen
                    typeName == "uint" ||
                    typeName == "ulong" ||
                    typeName == "char";
+        }
+
+        /// <summary>
+        /// Map a GraphQL type to a C# type, using custom scalar mappings if available
+        /// </summary>
+        private string MapToCSharpType(GraphQLType type, GraphQLSourceGenOptions options)
+        {
+            if (type.IsList)
+            {
+                string elementType = MapToCSharpType(type.OfType!, options);
+                return $"List<{elementType}>{(type.IsNullable ? "?" : "")}";
+            }
+
+            string csharpType;
+            
+            // Check for custom scalar mapping first
+            if (options.CustomScalarMappings.TryGetValue(type.Name, out var customMapping))
+            {
+                csharpType = customMapping;
+            }
+            // Then check built-in mappings
+            else if (GraphQLParser.ScalarMappings.TryGetValue(type.Name, out var mappedType))
+            {
+                csharpType = mappedType;
+            }
+            else
+            {
+                // For non-scalar types, assume it's a custom type
+                csharpType = type.Name;
+            }
+
+            return $"{csharpType}{(type.IsNullable ? "?" : "")}";
         }
     }
 }

@@ -21,6 +21,9 @@
   <PropertyGroup>
     <GraphQLSourceGenNamespace>GraphQL.Generated</GraphQLSourceGenNamespace>
     <GraphQLSourceGenUseRecords>true</GraphQLSourceGenUseRecords>
+    <GraphQLSourceGenUseSchemaForTypeInference>true</GraphQLSourceGenUseSchemaForTypeInference>
+    <GraphQLSourceGenSchemaFiles>schema-definition.graphql</GraphQLSourceGenSchemaFiles>
+    <GraphQLSourceGenCustomScalarMappings>DateTime:System.DateTime;Date:System.DateOnly;Time:System.TimeOnly</GraphQLSourceGenCustomScalarMappings>
   </PropertyGroup>
 
 </Project>

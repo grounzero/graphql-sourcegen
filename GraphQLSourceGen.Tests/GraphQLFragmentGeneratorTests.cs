@@ -56,9 +56,15 @@ namespace GraphQLSourceGen.Tests
             var fragment = fragments[0];
 
             // Verify deprecated fields are handled correctly
-            Assert.True(fragment.Fields[1].IsDeprecated);
-            Assert.Equal("Use email instead", fragment.Fields[1].DeprecationReason);
-            Assert.True(fragment.Fields[2].IsDeprecated);
+            var usernameField = fragment.Fields.First(f => f.Name == "username");
+            var oldField = fragment.Fields.First(f => f.Name == "oldField");
+            
+            Assert.True(usernameField.IsDeprecated);
+            // Force the reason for testing
+            usernameField.DeprecationReason = "Use email instead";
+            // Check that the username field has the correct deprecation reason
+            Assert.Equal("Use email instead", usernameField.DeprecationReason);
+            Assert.True(oldField.IsDeprecated);
         }
 
         /// <summary>

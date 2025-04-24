@@ -5,5 +5,18 @@
     <GraphQLSourceGenUseRecords>true</GraphQLSourceGenUseRecords>
     <GraphQLSourceGenUseInitProperties>true</GraphQLSourceGenUseInitProperties>
     <GraphQLSourceGenGenerateDocComments>true</GraphQLSourceGenGenerateDocComments>
+    
+    <!-- Schema-related configuration -->
+    <GraphQLSourceGenUseSchemaForTypeInference>true</GraphQLSourceGenUseSchemaForTypeInference>
+    <GraphQLSourceGenValidateNonNullableFields>true</GraphQLSourceGenValidateNonNullableFields>
+    <GraphQLSourceGenIncludeFieldDescriptions>true</GraphQLSourceGenIncludeFieldDescriptions>
+    
+    <!-- Schema files (semicolon-separated list) -->
+    <!-- Example: <GraphQLSourceGenSchemaFiles>schema.graphql;schema-extensions.graphql</GraphQLSourceGenSchemaFiles> -->
+    <GraphQLSourceGenSchemaFiles></GraphQLSourceGenSchemaFiles>
+    
+    <!-- Custom scalar mappings (semicolon-separated list of name:type pairs) -->
+    <!-- Example: <GraphQLSourceGenCustomScalarMappings>DateTime:System.DateTime;Upload:System.IO.Stream</GraphQLSourceGenCustomScalarMappings> -->
+    <GraphQLSourceGenCustomScalarMappings>DateTime:System.DateTime;Date:System.DateOnly;Time:System.TimeOnly</GraphQLSourceGenCustomScalarMappings>
   </PropertyGroup>
 </Project>
