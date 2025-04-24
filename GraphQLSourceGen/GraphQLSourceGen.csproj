@@ -5,9 +5,28 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    
+    <!-- Source Generator Configuration -->
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IsRoslynComponent>true</IsRoslynComponent>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    
+    <!-- Package Metadata -->
+    <PackageId>GraphQLSourceGen</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Your Name</Authors>
+    <Description>A Roslyn-based C# Source Generator that creates C# types from GraphQL fragment definitions.</Description>
+    <PackageTags>graphql;source-generator;codegen;roslyn</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/yourusername/graphql-sourcegen</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/yourusername/graphql-sourcegen</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    
+    <!-- Documentation -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn> <!-- Suppress warnings for missing XML comments -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,8 +34,19 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
   </ItemGroup>
 
+  <!-- Package Contents -->
   <ItemGroup>
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="build\GraphQLSourceGen.props" Pack="true" PackagePath="build\" />
+  </ItemGroup>
+
+  <!-- Exclude Samples from Package -->
+  <ItemGroup>
+    <None Remove="Samples\**" />
+    <Compile Remove="Samples\**" />
+    <EmbeddedResource Remove="Samples\**" />
   </ItemGroup>
 
 </Project>

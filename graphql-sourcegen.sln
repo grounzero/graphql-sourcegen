@@ -6,6 +6,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphQLSourceGen.Tests", "G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSourceGen", "GraphQLSourceGen\GraphQLSourceGen.csproj", "{3517AEAF-A318-D15F-A9CC-DDF3639CC089}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSourceGen.Samples", "samples\GraphQLSourceGen.Samples\GraphQLSourceGen.Samples.csproj", "{B4C5D6E7-F8A9-0B1C-2D3E-4F5A6B7C8D9E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{3517AEAF-A318-D15F-A9CC-DDF3639CC089}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3517AEAF-A318-D15F-A9CC-DDF3639CC089}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3517AEAF-A318-D15F-A9CC-DDF3639CC089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4C5D6E7-F8A9-0B1C-2D3E-4F5A6B7C8D9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4C5D6E7-F8A9-0B1C-2D3E-4F5A6B7C8D9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4C5D6E7-F8A9-0B1C-2D3E-4F5A6B7C8D9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4C5D6E7-F8A9-0B1C-2D3E-4F5A6B7C8D9E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
