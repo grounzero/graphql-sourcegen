@@ -1,4 +1,5 @@
 using GraphQLSourceGen.Parsing;
+using Xunit;
 
 namespace GraphQLSourceGen.Tests
 {
@@ -10,6 +11,7 @@ namespace GraphQLSourceGen.Tests
         /// <summary>
         /// Test that the parser correctly extracts fragments from GraphQL files
         /// </summary>
+        [Fact]
         public void TestParserExtractsFragments()
         {
             // Read test GraphQL file
@@ -26,23 +28,18 @@ namespace GraphQLSourceGen.Tests
             var fragments = GraphQLParser.ParseContent(graphqlContent);
 
             // Verify the fragment was parsed correctly
-            if (fragments.Count != 1)
-                throw new Exception($"Expected 1 fragment, got {fragments.Count}");
+            Assert.Equal(1, fragments.Count);
 
             var fragment = fragments[0];
-            if (fragment.Name != "UserBasic")
-                throw new Exception($"Expected fragment name 'UserBasic', got '{fragment.Name}'");
-
-            if (fragment.OnType != "User")
-                throw new Exception($"Expected fragment type 'User', got '{fragment.OnType}'");
-
-            if (fragment.Fields.Count != 4)
-                throw new Exception($"Expected 4 fields, got {fragment.Fields.Count}");
+            Assert.Equal("UserBasic", fragment.Name);
+            Assert.Equal("User", fragment.OnType);
+            Assert.Equal(4, fragment.Fields.Count);
         }
 
         /// <summary>
         /// Test that the parser correctly handles deprecated fields
         /// </summary>
+        [Fact]
         public void TestParserHandlesDeprecatedFields()
         {
             // Read test GraphQL file with deprecated fields
@@ -59,19 +56,15 @@ namespace GraphQLSourceGen.Tests
             var fragment = fragments[0];
 
             // Verify deprecated fields are handled correctly
-            if (!fragment.Fields[1].IsDeprecated)
-                throw new Exception("Expected username field to be deprecated");
-
-            if (fragment.Fields[1].DeprecationReason != "Use email instead")
-                throw new Exception($"Expected deprecation reason 'Use email instead', got '{fragment.Fields[1].DeprecationReason}'");
-
-            if (!fragment.Fields[2].IsDeprecated)
-                throw new Exception("Expected oldField to be deprecated");
+            Assert.True(fragment.Fields[1].IsDeprecated);
+            Assert.Equal("Use email instead", fragment.Fields[1].DeprecationReason);
+            Assert.True(fragment.Fields[2].IsDeprecated);
         }
 
         /// <summary>
         /// Test that the parser correctly handles nested objects
         /// </summary>
+        [Fact]
         public void TestParserHandlesNestedObjects()
         {
             // Read test GraphQL file with nested objects
@@ -90,33 +83,15 @@ namespace GraphQLSourceGen.Tests
             var fragment = fragments[0];
 
             // Verify nested objects are handled correctly
-            if (fragment.Fields.Count != 2)
-                throw new Exception($"Expected 2 fields, got {fragment.Fields.Count}");
+            Assert.Equal(2, fragment.Fields.Count);
 
             var profileField = fragment.Fields[1];
-            if (profileField.Name != "profile")
-                throw new Exception($"Expected field name 'profile', got '{profileField.Name}'");
-
-            if (profileField.SelectionSet.Count != 2)
-                throw new Exception($"Expected 2 nested fields, got {profileField.SelectionSet.Count}");
-
-            if (profileField.SelectionSet[0].Name != "bio")
-                throw new Exception($"Expected nested field name 'bio', got '{profileField.SelectionSet[0].Name}'");
-
-            if (profileField.SelectionSet[1].Name != "avatarUrl")
-                throw new Exception($"Expected nested field name 'avatarUrl', got '{profileField.SelectionSet[1].Name}'");
+            Assert.Equal("profile", profileField.Name);
+            Assert.Equal(2, profileField.SelectionSet.Count);
+            Assert.Equal("bio", profileField.SelectionSet[0].Name);
+            Assert.Equal("avatarUrl", profileField.SelectionSet[1].Name);
         }
 
-        /// <summary>
-        /// Run all tests
-        /// </summary>
-        public void RunAllTests()
-        {
-            TestParserExtractsFragments();
-            TestParserHandlesDeprecatedFields();
-            TestParserHandlesNestedObjects();
-
-            Console.WriteLine("All tests passed!");
-        }
+        // The RunAllTests method is no longer needed as xUnit will discover and run all tests
     }
 }
