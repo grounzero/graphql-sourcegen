@@ -1,0 +1,116 @@
+# GraphQL Schema Definition
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  user(id: ID!): User
+  users: [User!]!
+  post(id: ID!): Post
+  posts: [Post!]!
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+  updateUser(id: ID!, input: UpdateUserInput!): User!
+  deleteUser(id: ID!): Boolean!
+  createPost(input: CreatePostInput!): Post!
+  updatePost(id: ID!, input: UpdatePostInput!): Post!
+  deletePost(id: ID!): Boolean!
+}
+
+# User type with all fields referenced in fragments
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  isActive: Boolean!
+  username: String @deprecated(reason: "Use email instead")
+  oldField: String @deprecated
+  profile: UserProfile
+  posts: [Post!]
+  followers: [User!]
+}
+
+# User profile type
+type UserProfile {
+  bio: String
+  avatarUrl: String
+  joinDate: DateTime
+}
+
+# Post type with all fields referenced in fragments
+type Post {
+  id: ID!
+  title: String!
+  content: String
+  createdAt: DateTime!
+  publishedAt: DateTime
+  viewCount: Int
+  rating: Float
+  isPublished: Boolean!
+  tags: [String]
+  categories: [String!]!
+  author: User!
+  comments: [Comment!]
+}
+
+# Comment type
+type Comment {
+  id: ID!
+  text: String!
+  author: User!
+  createdAt: DateTime!
+}
+
+# Input types
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  name: String
+  email: String
+  password: String
+  isActive: Boolean
+}
+
+input CreatePostInput {
+  title: String!
+  content: String!
+  tags: [String]
+  categories: [String!]
+}
+
+input UpdatePostInput {
+  title: String
+  content: String
+  isPublished: Boolean
+  tags: [String]
+  categories: [String!]
+}
+
+# Custom scalar types
+scalar DateTime
+scalar Date
+scalar Time
+scalar Upload
+
+# Interface example
+interface Node {
+  id: ID!
+}
+
+# Union example
+union SearchResult = User | Post | Comment
+
+# Enum example
+enum UserRole {
+  ADMIN
+  EDITOR
+  VIEWER
+}
