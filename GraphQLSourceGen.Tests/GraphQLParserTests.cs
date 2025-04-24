@@ -23,7 +23,7 @@ namespace GraphQLSourceGen.Tests
             var fragments = GraphQLParser.ParseContent(graphql);
 
             // Assert
-            Assert.Equal(1, fragments.Count);
+            Assert.Single(fragments);
 
             var fragment = fragments[0];
             Assert.Equal("UserBasic", fragment.Name);
@@ -53,7 +53,7 @@ namespace GraphQLSourceGen.Tests
             var fragments = GraphQLParser.ParseContent(graphql);
 
             // Assert
-            Assert.Equal(1, fragments.Count);
+            Assert.Single(fragments);
 
             var fragment = fragments[0];
             Assert.Equal("UserDetails", fragment.Name);
@@ -82,7 +82,7 @@ namespace GraphQLSourceGen.Tests
             var fragments = GraphQLParser.ParseContent(graphql);
 
             // Assert
-            Assert.Equal(1, fragments.Count);
+            Assert.Single(fragments);
 
             var fragment = fragments[0];
             Assert.Equal(3, fragment.Fields.Count);
@@ -114,7 +114,7 @@ namespace GraphQLSourceGen.Tests
             var fragments = GraphQLParser.ParseContent(graphql);
 
             // Assert
-            Assert.Equal(1, fragments.Count);
+            Assert.Single(fragments);
 
             var fragment = fragments[0];
             Assert.Equal(2, fragment.Fields.Count);
@@ -149,7 +149,7 @@ namespace GraphQLSourceGen.Tests
             var fragments = GraphQLParser.ParseContent(graphql);
 
             // Assert
-            Assert.Equal(1, fragments.Count);
+            Assert.Single(fragments);
 
             var fragment = fragments[0];
             Assert.Equal(8, fragment.Fields.Count);

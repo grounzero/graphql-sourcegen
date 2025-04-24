@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <!-- Default configuration values -->
+    <GraphQLSourceGenNamespace>GraphQL.Generated</GraphQLSourceGenNamespace>
+    <GraphQLSourceGenUseRecords>true</GraphQLSourceGenUseRecords>
+    <GraphQLSourceGenUseInitProperties>true</GraphQLSourceGenUseInitProperties>
+    <GraphQLSourceGenGenerateDocComments>true</GraphQLSourceGenGenerateDocComments>
+  </PropertyGroup>
+</Project>
