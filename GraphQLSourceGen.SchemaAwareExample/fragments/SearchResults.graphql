@@ -1,0 +1,30 @@
+# Search results fragment using union types
+# This demonstrates schema-aware handling of union types
+fragment SearchResultItem on SearchResult {
+  __typename
+  ... on User {
+    id
+    name
+    email
+    role
+  }
+  ... on Post {
+    id
+    title
+    content
+    publishedAt
+    author {
+      id
+      name
+    }
+  }
+  ... on Comment {
+    id
+    text
+    createdAt
+    author {
+      id
+      name
+    }
+  }
+}

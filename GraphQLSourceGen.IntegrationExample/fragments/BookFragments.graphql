@@ -1,0 +1,78 @@
+# Book fragments for integration with GraphQL client
+
+# Basic book information
+fragment BookBasic on Book {
+  id
+  title
+  isbn
+  status
+  thumbnailUrl
+  price
+  currency
+}
+
+# Book with detailed information
+fragment BookDetailed on Book {
+  id
+  title
+  isbn
+  pageCount
+  publishedDate
+  thumbnailUrl
+  shortDescription
+  longDescription
+  status
+  categories
+  price
+  currency
+  rating
+  authors {
+    id
+    fullName
+  }
+}
+
+# Book with reviews
+fragment BookWithReviews on Book {
+  id
+  title
+  rating
+  reviews {
+    id
+    rating
+    comment
+    user
+    createdAt
+  }
+}
+
+# Book with all information
+fragment BookComplete on Book {
+  id
+  title
+  isbn
+  pageCount
+  publishedDate
+  thumbnailUrl
+  shortDescription
+  longDescription
+  status
+  categories
+  price
+  currency
+  rating
+  authors {
+    id
+    firstName
+    lastName
+    fullName
+    avatarUrl
+  }
+  reviews {
+    id
+    rating
+    comment
+    user
+    createdAt
+  }
+}

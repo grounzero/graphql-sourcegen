@@ -1,0 +1,22 @@
+# Complete user fragment with all information, using multiple fragments
+fragment CompleteUser on User {
+  ...BaseUser
+  ...UserWithProfile
+  ...UserWithPosts
+  orders {
+    id
+    orderNumber
+    totalAmount
+    status
+    createdAt
+    items {
+      quantity
+      total
+      product {
+        id
+        name
+        price
+      }
+    }
+  }
+}

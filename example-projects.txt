@@ -1,0 +1,155 @@
+GraphQLSourceGen Example Projects
+================================
+
+This repository contains several example projects that demonstrate different features and use cases of GraphQL Source Generator.
+
+Overview of Example Projects
+---------------------------
+
+1. Basic Example (GraphQLSourceGen.BasicExample)
+-----------------------------------------------
+Demonstrates basic fragment generation without schema awareness.
+
+Key Features:
+- Basic fragment definition and parsing
+- Generation of C# record types from GraphQL fragments
+- Property naming conventions (camelCase to PascalCase)
+- Nullable property handling
+- Documentation comments generation
+
+Configuration:
+<GraphQLSourceGenNamespace>GraphQL.Generated.Basic</GraphQLSourceGenNamespace>
+<GraphQLSourceGenUseRecords>true</GraphQLSourceGenUseRecords>
+<GraphQLSourceGenUseInitProperties>true</GraphQLSourceGenUseInitProperties>
+<GraphQLSourceGenGenerateDocComments>true</GraphQLSourceGenGenerateDocComments>
+
+2. Schema-Aware Example (GraphQLSourceGen.SchemaAwareExample)
+------------------------------------------------------------
+Demonstrates schema-aware fragment generation with type inference.
+
+Key Features:
+- Schema-based type inference
+- Non-nullable field validation
+- Field descriptions from schema
+- Multiple schema files
+- Custom scalar mappings
+
+Configuration:
+<GraphQLSourceGenNamespace>GraphQL.Generated.SchemaAware</GraphQLSourceGenNamespace>
+<GraphQLSourceGenUseSchemaForTypeInference>true</GraphQLSourceGenUseSchemaForTypeInference>
+<GraphQLSourceGenValidateNonNullableFields>true</GraphQLSourceGenValidateNonNullableFields>
+<GraphQLSourceGenIncludeFieldDescriptions>true</GraphQLSourceGenIncludeFieldDescriptions>
+<GraphQLSourceGenSchemaFiles>schema/schema.graphql;schema/schema-extensions.graphql</GraphQLSourceGenSchemaFiles>
+<GraphQLSourceGenCustomScalarMappings>DateTime:System.DateTime;Date:System.DateOnly;Time:System.TimeOnly;Upload:System.IO.Stream</GraphQLSourceGenCustomScalarMappings>
+
+3. Advanced Schema Features Example (GraphQLSourceGen.AdvancedSchemaExample)
+---------------------------------------------------------------------------
+Demonstrates advanced schema features like interfaces, unions, and complex types.
+
+Key Features:
+- Interface handling with multiple implementations
+- Union type handling
+- Complex nested types
+- Documentation comments from schema descriptions
+
+Configuration:
+<GraphQLSourceGenNamespace>GraphQL.Generated.Advanced</GraphQLSourceGenNamespace>
+<GraphQLSourceGenUseSchemaForTypeInference>true</GraphQLSourceGenUseSchemaForTypeInference>
+<GraphQLSourceGenValidateNonNullableFields>true</GraphQLSourceGenValidateNonNullableFields>
+<GraphQLSourceGenIncludeFieldDescriptions>true</GraphQLSourceGenIncludeFieldDescriptions>
+<GraphQLSourceGenSchemaFiles>schema/advanced-schema.graphql</GraphQLSourceGenSchemaFiles>
+<GraphQLSourceGenCustomScalarMappings>DateTime:System.DateTime;JSON:System.Text.Json.JsonElement</GraphQLSourceGenCustomScalarMappings>
+
+4. Custom Scalar Mappings Example (GraphQLSourceGen.CustomScalarExample)
+-----------------------------------------------------------------------
+Demonstrates mapping GraphQL scalar types to C# types.
+
+Key Features:
+- Custom scalar mappings for various types
+- Integration with common C# types
+- Handling of complex scalar types
+- Serialization and deserialization of custom scalars
+
+Configuration:
+<GraphQLSourceGenNamespace>GraphQL.Generated.CustomScalar</GraphQLSourceGenNamespace>
+<GraphQLSourceGenUseSchemaForTypeInference>true</GraphQLSourceGenUseSchemaForTypeInference>
+<GraphQLSourceGenSchemaFiles>schema/scalar-schema.graphql</GraphQLSourceGenSchemaFiles>
+<GraphQLSourceGenCustomScalarMappings>
+  DateTime:System.DateTime;
+  Date:System.DateOnly;
+  Time:System.TimeOnly;
+  URL:System.Uri;
+  Email:System.String;
+  UUID:System.Guid;
+  JSON:Newtonsoft.Json.Linq.JObject;
+  BigInt:System.Numerics.BigInteger;
+  Decimal:System.Decimal;
+  Upload:System.IO.Stream;
+  Byte:System.Byte;
+  ByteArray:System.Byte[];
+  PhoneNumber:System.String;
+  Color:System.Drawing.Color;
+  Duration:System.TimeSpan
+</GraphQLSourceGenCustomScalarMappings>
+
+5. Nullable Types Example (GraphQLSourceGen.NullableTypesExample)
+----------------------------------------------------------------
+Demonstrates how GraphQL nullability maps to C# nullable reference types.
+
+Key Features:
+- GraphQL to C# nullability mapping
+- Handling of nullable fields and collections
+- Nullable reference types in C#
+- Validation of non-nullable fields
+
+Configuration:
+<GraphQLSourceGenNamespace>GraphQL.Generated.Nullable</GraphQLSourceGenNamespace>
+<GraphQLSourceGenUseSchemaForTypeInference>true</GraphQLSourceGenUseSchemaForTypeInference>
+<GraphQLSourceGenValidateNonNullableFields>true</GraphQLSourceGenValidateNonNullableFields>
+<GraphQLSourceGenSchemaFiles>schema/nullable-schema.graphql</GraphQLSourceGenSchemaFiles>
+
+6. Fragment Composition Example (GraphQLSourceGen.FragmentCompositionExample)
+---------------------------------------------------------------------------
+Demonstrates how to compose fragments using fragment spreads.
+
+Key Features:
+- Fragment composition using fragment spreads
+- Reuse of fragments across multiple types
+- Hierarchical fragment composition
+- Nested fragment composition
+
+Configuration:
+<GraphQLSourceGenNamespace>GraphQL.Generated.Composition</GraphQLSourceGenNamespace>
+<GraphQLSourceGenUseSchemaForTypeInference>true</GraphQLSourceGenUseSchemaForTypeInference>
+<GraphQLSourceGenSchemaFiles>schema/composition-schema.graphql</GraphQLSourceGenSchemaFiles>
+
+7. Integration Example (GraphQLSourceGen.IntegrationExample)
+-----------------------------------------------------------
+Demonstrates how to integrate generated types with a GraphQL client.
+
+Key Features:
+- Integration with GraphQL.Client library
+- Strongly-typed GraphQL operations
+- Query and mutation examples
+- Error handling and response parsing
+
+Configuration:
+<GraphQLSourceGenNamespace>GraphQL.Generated.Integration</GraphQLSourceGenNamespace>
+<GraphQLSourceGenUseSchemaForTypeInference>true</GraphQLSourceGenUseSchemaForTypeInference>
+<GraphQLSourceGenSchemaFiles>schema/integration-schema.graphql</GraphQLSourceGenSchemaFiles>
+
+How to Run the Examples
+----------------------
+1. Build the solution:
+   dotnet build
+
+2. Run a specific example:
+   dotnet run --project GraphQLSourceGen.BasicExample
+   dotnet run --project GraphQLSourceGen.SchemaAwareExample
+   dotnet run --project GraphQLSourceGen.AdvancedSchemaExample
+   dotnet run --project GraphQLSourceGen.CustomScalarExample
+   dotnet run --project GraphQLSourceGen.NullableTypesExample
+   dotnet run --project GraphQLSourceGen.FragmentCompositionExample
+   dotnet run --project GraphQLSourceGen.IntegrationExample
+
+Each example project includes detailed console output that explains the features being demonstrated.

@@ -1,0 +1,7 @@
+# Post fragment
+fragment PostFragment on Post {
+  id
+  title
+  content
+  publishedAt
+}

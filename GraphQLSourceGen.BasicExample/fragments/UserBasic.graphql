@@ -1,0 +1,7 @@
+# A basic user fragment without schema awareness
+fragment UserBasic on User {
+  id
+  name
+  email
+  isActive
+}

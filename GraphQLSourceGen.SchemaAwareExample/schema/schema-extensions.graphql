@@ -1,0 +1,65 @@
+# Schema Extensions
+
+# Extend the User type with additional fields
+extend type User {
+  lastLoginAt: DateTime
+  preferences: UserPreferences
+  statistics: UserStatistics!
+}
+
+# Extend the Post type with additional fields
+extend type Post {
+  likes: Int!
+  dislikes: Int!
+  metadata: PostMetadata
+}
+
+# New types for the extensions
+type UserPreferences {
+  theme: String
+  emailNotifications: Boolean!
+  pushNotifications: Boolean!
+}
+
+type UserStatistics {
+  postsCount: Int!
+  followersCount: Int!
+  followingCount: Int!
+  totalLikes: Int!
+}
+
+type PostMetadata {
+  source: String
+  originalUrl: String
+  readTimeMinutes: Int
+  keywords: [String!]
+  jsonData: JSON
+}
+
+# Extend the Query type with new operations
+extend type Query {
+  userPreferences(userId: ID!): UserPreferences
+  userStatistics(userId: ID!): UserStatistics!
+  postMetadata(postId: ID!): PostMetadata
+}
+
+# Extend the Mutation type with new operations
+extend type Mutation {
+  updateUserPreferences(userId: ID!, preferences: UserPreferencesInput!): UserPreferences!
+  updatePostMetadata(postId: ID!, metadata: PostMetadataInput!): PostMetadata!
+}
+
+# New input types for the extensions
+input UserPreferencesInput {
+  theme: String
+  emailNotifications: Boolean
+  pushNotifications: Boolean
+}
+
+input PostMetadataInput {
+  source: String
+  originalUrl: String
+  readTimeMinutes: Int
+  keywords: [String!]
+  jsonData: JSON
+}

@@ -133,5 +133,33 @@ namespace GraphQLSourceGen.Diagnostics
             description: "Fragments on interface or union types should include the __typename field to enable proper type resolution.",
             helpLinkUri: $"https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md",
             customTags: [WellKnownDiagnosticTags.AnalyzerException]);
+
+        /// <summary>
+        /// Configuration loaded diagnostic
+        /// </summary>
+        public static readonly DiagnosticDescriptor ConfigurationLoaded = new(
+            id: "GQLSG010",
+            title: "Configuration loaded",
+            messageFormat: "Configuration loaded from '{0}'",
+            category: "GraphQLSourceGen",
+            DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            description: "Configuration was successfully loaded from the specified file.",
+            helpLinkUri: $"https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md",
+            customTags: [WellKnownDiagnosticTags.AnalyzerException]);
+
+        /// <summary>
+        /// Configuration error diagnostic
+        /// </summary>
+        public static readonly DiagnosticDescriptor ConfigurationError = new(
+            id: "GQLSG011",
+            title: "Configuration error",
+            messageFormat: "{0}",
+            category: "GraphQLSourceGen",
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "An error occurred while loading the configuration.",
+            helpLinkUri: $"https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md",
+            customTags: [WellKnownDiagnosticTags.AnalyzerException]);
     }
 }

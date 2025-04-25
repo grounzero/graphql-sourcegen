@@ -1,0 +1,41 @@
+# User fragment with nested post selections
+# This demonstrates schema-aware type inference for nested objects
+fragment UserWithPosts on User {
+  id
+  name
+  email
+  isActive
+  role
+  profile {
+    bio
+    avatarUrl
+    joinDate
+  }
+  posts {
+    id
+    title
+    content
+    publishedAt
+    viewCount
+    rating
+    isPublished
+    tags
+    categories
+    likes
+    dislikes
+    metadata {
+      readTimeMinutes
+      keywords
+    }
+  }
+  statistics {
+    postsCount
+    followersCount
+    totalLikes
+  }
+  preferences {
+    theme
+    emailNotifications
+    pushNotifications
+  }
+}

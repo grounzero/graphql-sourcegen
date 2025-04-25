@@ -6,7 +6,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphQLSourceGen.Tests", "G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSourceGen", "GraphQLSourceGen\GraphQLSourceGen.csproj", "{3517AEAF-A318-D15F-A9CC-DDF3639CC089}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSourceGen.Samples", "GraphQLSourceGen.Samples\GraphQLSourceGen.Samples.csproj", "{B4C5D6E7-F8A9-0B1C-2D3E-4F5A6B7C8D9E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSourceGen.BasicExample", "GraphQLSourceGen.BasicExample\GraphQLSourceGen.BasicExample.csproj", "{C6D7E8F9-0A1B-2C3D-4E5F-6A7B8C9D0E1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSourceGen.SchemaAwareExample", "GraphQLSourceGen.SchemaAwareExample\GraphQLSourceGen.SchemaAwareExample.csproj", "{D7E8F9A0-1B2C-3D4E-5F6A-7B8C9D0E1F2A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSourceGen.AdvancedSchemaExample", "GraphQLSourceGen.AdvancedSchemaExample\GraphQLSourceGen.AdvancedSchemaExample.csproj", "{E8F9A01B-2C3D-4E5F-6A7B-8C9D0E1F2A3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSourceGen.CustomScalarExample", "GraphQLSourceGen.CustomScalarExample\GraphQLSourceGen.CustomScalarExample.csproj", "{F9A01B2C-3D4E-5F6A-7B8C-9D0E1F2A3B4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSourceGen.NullableTypesExample", "GraphQLSourceGen.NullableTypesExample\GraphQLSourceGen.NullableTypesExample.csproj", "{A01B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSourceGen.FragmentCompositionExample", "GraphQLSourceGen.FragmentCompositionExample\GraphQLSourceGen.FragmentCompositionExample.csproj", "{01B2C3D4-E5F6-7A8B-8C9D-0E1F2A3B4C5D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQLSourceGen.IntegrationExample", "GraphQLSourceGen.IntegrationExample\GraphQLSourceGen.IntegrationExample.csproj", "{1B2C3D4E-5F6A-7B8C-9D0E-1F2A3B4C5D67}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +38,34 @@ Global
 		{B4C5D6E7-F8A9-0B1C-2D3E-4F5A6B7C8D9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4C5D6E7-F8A9-0B1C-2D3E-4F5A6B7C8D9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4C5D6E7-F8A9-0B1C-2D3E-4F5A6B7C8D9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6D7E8F9-0A1B-2C3D-4E5F-6A7B8C9D0E1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6D7E8F9-0A1B-2C3D-4E5F-6A7B8C9D0E1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6D7E8F9-0A1B-2C3D-4E5F-6A7B8C9D0E1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6D7E8F9-0A1B-2C3D-4E5F-6A7B8C9D0E1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7E8F9A0-1B2C-3D4E-5F6A-7B8C9D0E1F2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7E8F9A0-1B2C-3D4E-5F6A-7B8C9D0E1F2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7E8F9A0-1B2C-3D4E-5F6A-7B8C9D0E1F2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7E8F9A0-1B2C-3D4E-5F6A-7B8C9D0E1F2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8F9A01B-2C3D-4E5F-6A7B-8C9D0E1F2A3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8F9A01B-2C3D-4E5F-6A7B-8C9D0E1F2A3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8F9A01B-2C3D-4E5F-6A7B-8C9D0E1F2A3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8F9A01B-2C3D-4E5F-6A7B-8C9D0E1F2A3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9A01B2C-3D4E-5F6A-7B8C-9D0E1F2A3B4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9A01B2C-3D4E-5F6A-7B8C-9D0E1F2A3B4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9A01B2C-3D4E-5F6A-7B8C-9D0E1F2A3B4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9A01B2C-3D4E-5F6A-7B8C-9D0E1F2A3B4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A01B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A01B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A01B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A01B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01B2C3D4-E5F6-7A8B-8C9D-0E1F2A3B4C5D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01B2C3D4-E5F6-7A8B-8C9D-0E1F2A3B4C5D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01B2C3D4-E5F6-7A8B-8C9D-0E1F2A3B4C5D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01B2C3D4-E5F6-7A8B-8C9D-0E1F2A3B4C5D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B2C3D4E-5F6A-7B8C-9D0E-1F2A3B4C5D67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B2C3D4E-5F6A-7B8C-9D0E-1F2A3B4C5D67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B2C3D4E-5F6A-7B8C-9D0E-1F2A3B4C5D67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B2C3D4E-5F6A-7B8C-9D0E-1F2A3B4C5D67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

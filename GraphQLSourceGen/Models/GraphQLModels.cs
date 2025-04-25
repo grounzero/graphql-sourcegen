@@ -31,6 +31,7 @@ namespace GraphQLSourceGen.Models
         public string? DeprecationReason { get; set; }
         public List<GraphQLField> SelectionSet { get; set; } = [];
         public List<string> FragmentSpreads { get; set; } = [];
+        public string? InlineFragmentType { get; set; }
     }
 
     /// <summary>

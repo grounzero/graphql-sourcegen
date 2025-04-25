@@ -1,0 +1,117 @@
+# GraphQL Schema for Integration Example
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  books: [Book!]!
+  book(id: ID!): Book
+  authors: [Author!]!
+  author(id: ID!): Author
+}
+
+type Mutation {
+  addBook(input: AddBookInput!): Book!
+  updateBook(id: ID!, input: UpdateBookInput!): Book!
+  deleteBook(id: ID!): Boolean!
+  addAuthor(input: AddAuthorInput!): Author!
+  updateAuthor(id: ID!, input: UpdateAuthorInput!): Author!
+  deleteAuthor(id: ID!): Boolean!
+}
+
+type Book {
+  id: ID!
+  title: String!
+  isbn: String!
+  pageCount: Int!
+  publishedDate: String
+  thumbnailUrl: String
+  shortDescription: String
+  longDescription: String
+  status: BookStatus!
+  authors: [Author!]!
+  categories: [String!]!
+  price: Float
+  currency: String
+  rating: Float
+  reviews: [Review!]
+}
+
+type Author {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  fullName: String!
+  biography: String
+  avatarUrl: String
+  books: [Book!]!
+  website: String
+  twitter: String
+  github: String
+}
+
+type Review {
+  id: ID!
+  rating: Int!
+  comment: String
+  user: String!
+  createdAt: String!
+}
+
+enum BookStatus {
+  PUBLISHED
+  DRAFT
+  ARCHIVED
+}
+
+input AddBookInput {
+  title: String!
+  isbn: String!
+  pageCount: Int!
+  publishedDate: String
+  thumbnailUrl: String
+  shortDescription: String
+  longDescription: String
+  status: BookStatus!
+  authorIds: [ID!]!
+  categories: [String!]!
+  price: Float
+  currency: String
+}
+
+input UpdateBookInput {
+  title: String
+  isbn: String
+  pageCount: Int
+  publishedDate: String
+  thumbnailUrl: String
+  shortDescription: String
+  longDescription: String
+  status: BookStatus
+  authorIds: [ID!]
+  categories: [String!]
+  price: Float
+  currency: String
+}
+
+input AddAuthorInput {
+  firstName: String!
+  lastName: String!
+  biography: String
+  avatarUrl: String
+  website: String
+  twitter: String
+  github: String
+}
+
+input UpdateAuthorInput {
+  firstName: String
+  lastName: String
+  biography: String
+  avatarUrl: String
+  website: String
+  twitter: String
+  github: String
+}

@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GraphQLSourceGen\GraphQLSourceGen.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="fragments\*.graphql" />
+    <None Include="schema\*.graphql" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="GraphQL.Client" Version="6.0.0" />
+    <PackageReference Include="GraphQL.Client.Serializer.SystemTextJson" Version="6.0.0" />
+  </ItemGroup>
+  
+  <!-- Integration example configuration -->
+  <PropertyGroup>
+    <GraphQLSourceGenNamespace>GraphQL.Generated.Integration</GraphQLSourceGenNamespace>
+    <GraphQLSourceGenUseSchemaForTypeInference>true</GraphQLSourceGenUseSchemaForTypeInference>
+    <GraphQLSourceGenSchemaFiles>$(MSBuildProjectDirectory)/schema/integration-schema.graphql</GraphQLSourceGenSchemaFiles>
+  </PropertyGroup>
+
+</Project>

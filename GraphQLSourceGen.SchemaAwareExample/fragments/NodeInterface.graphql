@@ -1,0 +1,20 @@
+# Node interface fragment
+# This demonstrates schema-aware handling of interface types
+fragment NodeFragment on Node {
+  __typename
+  id
+  ... on User {
+    name
+    email
+    role
+  }
+  ... on Post {
+    title
+    content
+    publishedAt
+  }
+  ... on Comment {
+    text
+    createdAt
+  }
+}

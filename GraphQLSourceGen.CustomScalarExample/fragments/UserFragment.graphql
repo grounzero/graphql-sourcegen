@@ -1,0 +1,13 @@
+# User fragment demonstrating basic scalar mappings
+fragment UserWithScalars on User {
+  id
+  name
+  email
+  phone
+  dateOfBirth
+  registeredAt
+  lastLoginAt
+  profileColor
+  settings
+  profilePicture
+}

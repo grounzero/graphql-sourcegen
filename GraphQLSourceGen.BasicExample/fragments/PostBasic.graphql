@@ -1,0 +1,10 @@
+# A basic post fragment without schema awareness
+fragment PostBasic on Post {
+  id
+  title
+  content
+  publishedAt
+  viewCount
+  rating
+  isPublished
+}

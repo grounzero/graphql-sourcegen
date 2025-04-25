@@ -1,0 +1,21 @@
+# User fragment with profile information, using the base user fragment
+fragment UserWithProfile on User {
+  ...BaseUser
+  bio
+  avatarUrl
+  updatedAt
+  address {
+    street
+    city
+    state
+    zipCode
+    country
+  }
+  preferences {
+    theme
+    emailNotifications
+    pushNotifications
+    language
+    timezone
+  }
+}

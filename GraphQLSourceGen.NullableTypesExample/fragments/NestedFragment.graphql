@@ -1,0 +1,51 @@
+# Nested fragment demonstrating nullability in nested structures
+fragment UserWithNestedData on User {
+  id
+  username
+  
+  # Nested object with mixed nullability
+  profile {
+    bio
+    avatarUrl
+    joinDate
+    location
+    website
+    socialLinks {
+      platform
+      url
+    }
+  }
+  
+  # Non-nullable list with nested fields
+  posts {
+    id
+    title
+    content
+    comments {
+      id
+      text
+      author {
+        id
+        username
+      }
+    }
+    metadata {
+      views
+      likes
+      keywords
+    }
+  }
+}
+
+# Fragment for result types with nullable error fields
+fragment UserResultWithNullability on UserResult {
+  user {
+    id
+    username
+    email
+  }
+  errors {
+    message
+    path
+  }
+}

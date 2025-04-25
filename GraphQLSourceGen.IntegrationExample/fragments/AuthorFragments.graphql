@@ -1,0 +1,65 @@
+# Author fragments for integration with GraphQL client
+
+# Basic author information
+fragment AuthorBasic on Author {
+  id
+  firstName
+  lastName
+  fullName
+  avatarUrl
+}
+
+# Author with detailed information
+fragment AuthorDetailed on Author {
+  id
+  firstName
+  lastName
+  fullName
+  biography
+  avatarUrl
+  website
+  twitter
+  github
+}
+
+# Author with books
+fragment AuthorWithBooks on Author {
+  id
+  firstName
+  lastName
+  fullName
+  avatarUrl
+  books {
+    id
+    title
+    thumbnailUrl
+    status
+  }
+}
+
+# Author with all information
+fragment AuthorComplete on Author {
+  id
+  firstName
+  lastName
+  fullName
+  biography
+  avatarUrl
+  website
+  twitter
+  github
+  books {
+    id
+    title
+    isbn
+    pageCount
+    publishedDate
+    thumbnailUrl
+    shortDescription
+    status
+    categories
+    price
+    currency
+    rating
+  }
+}

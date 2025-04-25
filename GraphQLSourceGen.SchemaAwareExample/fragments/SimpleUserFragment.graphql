@@ -1,0 +1,10 @@
+# Simple user fragment without nested lists
+fragment SimpleUser on User {
+  id
+  name
+  email
+  isActive
+  role
+  bio
+  avatarUrl
+}

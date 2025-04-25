@@ -1,0 +1,23 @@
+# Event fragment demonstrating date/time scalar mappings
+fragment EventWithDateTimeScalars on Event {
+  id
+  title
+  description
+  startDate
+  endDate
+  duration
+  location {
+    id
+    name
+    address
+    openingTime
+    closingTime
+    timezone
+  }
+  organizer {
+    id
+    name
+  }
+  maxAttendees
+  metadata
+}

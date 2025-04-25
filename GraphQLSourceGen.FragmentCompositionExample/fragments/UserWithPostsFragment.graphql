@@ -1,0 +1,26 @@
+# User fragment with posts, using the base user fragment
+fragment UserWithPosts on User {
+  ...BaseUser
+  posts {
+    id
+    title
+    slug
+    summary
+    createdAt
+    publishedAt
+    isPublished
+    likes
+    views
+    featuredImage
+  }
+  comments {
+    id
+    content
+    createdAt
+    likes
+    post {
+      id
+      title
+    }
+  }
+}

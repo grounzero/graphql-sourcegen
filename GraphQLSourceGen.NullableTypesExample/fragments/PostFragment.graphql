@@ -1,0 +1,52 @@
+# Post fragment demonstrating various nullability patterns
+fragment PostWithNullability on Post {
+  # Non-nullable scalar
+  id
+  
+  # Non-nullable string
+  title
+  
+  # Nullable string
+  subtitle
+  
+  # Non-nullable string
+  content
+  
+  # Non-nullable object reference
+  author {
+    id
+    username
+    email
+  }
+  
+  # Non-nullable datetime
+  createdAt
+  
+  # Nullable datetime
+  publishedAt
+  
+  # Nullable list of non-nullable objects
+  comments {
+    id
+    text
+    author {
+      id
+      username
+    }
+  }
+  
+  # Non-nullable list that might be empty
+  tags
+  
+  # Nullable list of nullable strings
+  relatedLinks
+  
+  # Nullable nested object
+  metadata {
+    views
+    likes
+    shares
+    readTime
+    keywords
+  }
+}

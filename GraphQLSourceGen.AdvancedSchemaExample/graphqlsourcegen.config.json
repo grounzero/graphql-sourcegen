@@ -1,0 +1,20 @@
+{
+  "namespace": "GraphQL.Generated",
+  "useRecords": false,
+  "useInitProperties": false,
+  "generateDocComments": true,
+  "useSchemaForTypeInference": true,
+  "validateNonNullableFields": true,
+  "includeFieldDescriptions": true,
+  "customScalarMappings": {
+    "DateTime": "System.DateTime",
+    "JSON": "System.Text.Json.JsonElement",
+    "Int": "int",
+    "Float": "float",
+    "Boolean": "bool",
+    "ID": "string",
+    "String": "string"
+  },
+  "nestedModelBehavior": "Nested",
+  "maxNestedDepth": 0
+}

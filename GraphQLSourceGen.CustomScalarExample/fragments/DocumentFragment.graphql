@@ -1,0 +1,17 @@
+# Document fragment demonstrating file-related scalar mappings
+fragment DocumentWithFileScalars on Document {
+  id
+  title
+  fileSize
+  mimeType
+  uploadedAt
+  uploadedBy {
+    id
+    name
+    email
+  }
+  content
+  checksum
+  downloadUrl
+  metadata
+}

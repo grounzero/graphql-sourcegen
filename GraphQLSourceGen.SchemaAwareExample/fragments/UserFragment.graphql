@@ -1,0 +1,8 @@
+# User fragment
+fragment UserFragment on User {
+  id
+  name
+  email
+  isActive
+  role
+}

@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GraphQLSourceGen\GraphQLSourceGen.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="fragments\*.graphql" />
+    <None Include="schema\*.graphql" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+  
+  <!-- Custom scalar mappings configuration -->
+  <PropertyGroup>
+    <GraphQLSourceGenNamespace>GraphQL.Generated.CustomScalar</GraphQLSourceGenNamespace>
+    <GraphQLSourceGenUseSchemaForTypeInference>true</GraphQLSourceGenUseSchemaForTypeInference>
+    <GraphQLSourceGenSchemaFiles>$(MSBuildProjectDirectory)/schema/scalar-schema.graphql</GraphQLSourceGenSchemaFiles>
+    <GraphQLSourceGenCustomScalarMappings>
+      DateTime:System.DateTime;
+      Date:System.DateOnly;
+      Time:System.TimeOnly;
+      URL:System.Uri;
+      Email:System.String;
+      UUID:System.Guid;
+      JSON:Newtonsoft.Json.Linq.JObject;
+      BigInt:System.Numerics.BigInteger;
+      Decimal:System.Decimal;
+      Upload:System.IO.Stream;
+      Byte:System.Byte;
+      ByteArray:System.Byte[];
+      PhoneNumber:System.String;
+      Color:System.Drawing.Color;
+      Duration:System.TimeSpan
+    </GraphQLSourceGenCustomScalarMappings>
+  </PropertyGroup>
+
+</Project>

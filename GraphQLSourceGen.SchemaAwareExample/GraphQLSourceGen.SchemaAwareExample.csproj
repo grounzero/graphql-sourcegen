@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GraphQLSourceGen\GraphQLSourceGen.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="fragments\*.graphql" />
+    <None Include="schema\*.graphql" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  
+  <!-- Schema-aware configuration options -->
+  <PropertyGroup>
+    <GraphQLSourceGenNamespace>GraphQL.Generated.SchemaAware</GraphQLSourceGenNamespace>
+    <GraphQLSourceGenUseSchemaForTypeInference>true</GraphQLSourceGenUseSchemaForTypeInference>
+    <GraphQLSourceGenValidateNonNullableFields>true</GraphQLSourceGenValidateNonNullableFields>
+    <GraphQLSourceGenIncludeFieldDescriptions>true</GraphQLSourceGenIncludeFieldDescriptions>
+    <GraphQLSourceGenSchemaFiles>$(MSBuildProjectDirectory)/schema/schema.graphql;$(MSBuildProjectDirectory)/schema/schema-extensions.graphql</GraphQLSourceGenSchemaFiles>
+    <GraphQLSourceGenCustomScalarMappings>DateTime:System.DateTime;Date:System.DateOnly;Time:System.TimeOnly;Upload:System.IO.Stream</GraphQLSourceGenCustomScalarMappings>
+  </PropertyGroup>
+
+</Project>

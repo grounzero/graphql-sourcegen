@@ -1,0 +1,56 @@
+# Base product fragment with essential fields
+fragment BaseProduct on Product {
+  id
+  name
+  price
+  salePrice
+  onSale
+  sku
+  inventory
+}
+
+# Product fragment with details, using the base product fragment
+fragment ProductWithDetails on Product {
+  ...BaseProduct
+  description
+  categories
+  tags
+  images
+  rating
+  dimensions {
+    length
+    width
+    height
+    unit
+  }
+  weight
+  manufacturer
+  createdAt
+  updatedAt
+}
+
+# Product fragment with reviews, using the base product fragment
+fragment ProductWithReviews on Product {
+  ...BaseProduct
+  reviews {
+    id
+    rating
+    title
+    content
+    createdAt
+    helpful
+    verified
+    user {
+      id
+      username
+      avatarUrl
+    }
+  }
+}
+
+# Complete product fragment with all information, using multiple fragments
+fragment CompleteProduct on Product {
+  ...BaseProduct
+  ...ProductWithDetails
+  ...ProductWithReviews
+}

@@ -1,0 +1,6 @@
+# Comment fragment
+fragment CommentFragment on Comment {
+  id
+  text
+  createdAt
+}

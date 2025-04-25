@@ -3,6 +3,27 @@ using System.Collections.Generic;
 namespace GraphQLSourceGen.Configuration
 {
     /// <summary>
+    /// Enum to control how nested models are generated
+    /// </summary>
+    public enum NestedModelBehavior
+    {
+        /// <summary>
+        /// Generate nested models within their parent class
+        /// </summary>
+        Nested,
+        
+        /// <summary>
+        /// Generate all models at the top level
+        /// </summary>
+        Flattened,
+        
+        /// <summary>
+        /// Generate common models at the top level, but keep specialized models nested
+        /// </summary>
+        Mixed
+    }
+    
+    /// <summary>
     /// Configuration options for GraphQL Source Generator
     /// </summary>
     public class GraphQLSourceGenOptions
@@ -51,5 +72,21 @@ namespace GraphQLSourceGen.Configuration
         /// Whether to include field descriptions from the schema in the generated code
         /// </summary>
         public bool IncludeFieldDescriptions { get; set; } = true;
+        
+        /// <summary>
+        /// Controls how nested models are generated.
+        /// </summary>
+        public NestedModelBehavior NestedModelBehavior { get; set; } = NestedModelBehavior.Mixed;
+        
+        /// <summary>
+        /// Maximum nesting depth for nested models. Models beyond this depth will be generated at the top level.
+        /// A value of 0 means no limit.
+        /// </summary>
+        public int MaxNestedDepth { get; set; } = 0;
+        
+        /// <summary>
+        /// Custom model name mappings from GraphQL field names to C# class names.
+        /// </summary>
+        public Dictionary<string, string> CustomModelNameMappings { get; set; } = new Dictionary<string, string>();
     }
 }

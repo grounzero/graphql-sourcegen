@@ -1,0 +1,33 @@
+## Example Projects
+
+This repository includes several example projects that demonstrate different features and use cases of GraphQL Source Generator:
+
+1. **Basic Example** (GraphQLSourceGen.BasicExample)
+   - Demonstrates basic fragment generation without schema awareness
+   - Shows property naming conventions, nullable handling, and documentation comments
+
+2. **Schema-Aware Example** (GraphQLSourceGen.SchemaAwareExample)
+   - Demonstrates schema-aware fragment generation with type inference
+   - Shows how to use multiple schema files and custom scalar mappings
+
+3. **Advanced Schema Features Example** (GraphQLSourceGen.AdvancedSchemaExample)
+   - Demonstrates advanced schema features like interfaces, unions, and complex types
+   - Shows how to handle complex nested structures
+
+4. **Custom Scalar Mappings Example** (GraphQLSourceGen.CustomScalarExample)
+   - Demonstrates mapping GraphQL scalar types to C# types
+   - Shows integration with common C# types and libraries
+
+5. **Nullable Types Example** (GraphQLSourceGen.NullableTypesExample)
+   - Demonstrates how GraphQL nullability maps to C# nullable reference types
+   - Shows best practices for handling nullable fields
+
+6. **Fragment Composition Example** (GraphQLSourceGen.FragmentCompositionExample)
+   - Demonstrates how to compose fragments using fragment spreads
+   - Shows reuse of fragments across multiple types
+
+7. **Integration Example** (GraphQLSourceGen.IntegrationExample)
+   - Demonstrates how to integrate generated types with a GraphQL client
+   - Shows how to use generated types in a real-world scenario
+
+See the `example-projects.txt` file for more details on each example project.

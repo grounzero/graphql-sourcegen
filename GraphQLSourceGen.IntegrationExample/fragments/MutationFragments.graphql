@@ -1,0 +1,61 @@
+# Mutation fragments for integration with GraphQL client
+
+# Mutation to add a book
+fragment AddBookMutation on Mutation {
+  addBook(input: {
+    title: "PLACEHOLDER_TITLE",
+    isbn: "PLACEHOLDER_ISBN",
+    pageCount: 0,
+    status: PUBLISHED,
+    authorIds: ["PLACEHOLDER_AUTHOR_ID"],
+    categories: ["PLACEHOLDER_CATEGORY"]
+  }) {
+    ...BookDetailed
+  }
+}
+
+# Mutation to update a book
+fragment UpdateBookMutation on Mutation {
+  updateBook(
+    id: "PLACEHOLDER_ID",
+    input: {
+      title: "PLACEHOLDER_TITLE",
+      status: PUBLISHED
+    }
+  ) {
+    ...BookDetailed
+  }
+}
+
+# Mutation to delete a book
+fragment DeleteBookMutation on Mutation {
+  deleteBook(id: "PLACEHOLDER_ID")
+}
+
+# Mutation to add an author
+fragment AddAuthorMutation on Mutation {
+  addAuthor(input: {
+    firstName: "PLACEHOLDER_FIRST_NAME",
+    lastName: "PLACEHOLDER_LAST_NAME"
+  }) {
+    ...AuthorDetailed
+  }
+}
+
+# Mutation to update an author
+fragment UpdateAuthorMutation on Mutation {
+  updateAuthor(
+    id: "PLACEHOLDER_ID",
+    input: {
+      firstName: "PLACEHOLDER_FIRST_NAME",
+      lastName: "PLACEHOLDER_LAST_NAME"
+    }
+  ) {
+    ...AuthorDetailed
+  }
+}
+
+# Mutation to delete an author
+fragment DeleteAuthorMutation on Mutation {
+  deleteAuthor(id: "PLACEHOLDER_ID")
+}

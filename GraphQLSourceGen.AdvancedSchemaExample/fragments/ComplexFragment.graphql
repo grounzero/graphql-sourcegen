@@ -1,0 +1,101 @@
+# Complex fragment demonstrating multiple interfaces and nested types
+fragment ArticleWithEverything on Article {
+  # Node interface fields
+  id
+  
+  # Content interface fields
+  title
+  createdAt
+  author {
+    id
+    name
+    email
+    role
+    profile {
+      bio
+      avatarUrl
+      joinDate
+      socialLinks {
+        platform
+        url
+      }
+    }
+    content {
+      id
+      title
+      contentType
+    }
+  }
+  contentType
+  tags
+  metadata
+  
+  # Commentable interface fields
+  comments {
+    id
+    text
+    author {
+      id
+      name
+      email
+    }
+    createdAt
+  }
+  commentCount
+  
+  # Likeable interface fields
+  likedBy {
+    id
+    name
+  }
+  likeCount
+  
+  # Article-specific fields
+  body
+  publishedAt
+  readTimeMinutes
+  featuredImage
+}
+
+# Complex fragment with multiple levels of nesting
+fragment OrderWithDetails on Order {
+  id
+  user {
+    id
+    name
+    email
+    role
+    profile {
+      bio
+      avatarUrl
+      joinDate
+    }
+  }
+  items {
+    product {
+      id
+      name
+      description
+      price
+      inStock
+      categories
+      reviews {
+        id
+        rating
+        text
+        author {
+          id
+          name
+        }
+        createdAt
+      }
+      averageRating
+    }
+    quantity
+    price
+  }
+  totalAmount
+  status
+  placedAt
+  updatedAt
+}

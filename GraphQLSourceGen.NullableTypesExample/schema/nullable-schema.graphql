@@ -1,0 +1,183 @@
+# GraphQL Schema with Various Nullability Patterns
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  user(id: ID!): User
+  post(id: ID!): Post
+  comment(id: ID!): Comment
+  users(filter: UserFilter): [User!]!
+  posts(filter: PostFilter): [Post!]
+  comments(postId: ID!): [Comment]
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): UserResult!
+  createPost(input: CreatePostInput!): PostResult!
+  addComment(input: AddCommentInput!): CommentResult!
+}
+
+# User type with various nullability patterns
+type User {
+  # Non-nullable scalar
+  id: ID!
+  
+  # Non-nullable string
+  username: String!
+  
+  # Nullable string
+  fullName: String
+  
+  # Nullable scalar
+  email: String
+  
+  # Non-nullable boolean
+  isActive: Boolean!
+  
+  # Nullable object
+  profile: UserProfile
+  
+  # Non-nullable list of non-nullable objects
+  posts: [Post!]!
+  
+  # Nullable list of non-nullable objects
+  drafts: [Post!]
+  
+  # Non-nullable list of nullable objects
+  comments: [Comment]!
+  
+  # Nullable list of nullable objects
+  savedPosts: [Post]
+  
+  # Non-nullable nested list
+  roles: [[String!]!]!
+}
+
+# Post type with various nullability patterns
+type Post {
+  # Non-nullable scalar
+  id: ID!
+  
+  # Non-nullable string
+  title: String!
+  
+  # Nullable string
+  subtitle: String
+  
+  # Non-nullable string
+  content: String!
+  
+  # Non-nullable object reference
+  author: User!
+  
+  # Non-nullable datetime
+  createdAt: String!
+  
+  # Nullable datetime
+  publishedAt: String
+  
+  # Nullable list of non-nullable objects
+  comments: [Comment!]
+  
+  # Non-nullable list that might be empty
+  tags: [String!]!
+  
+  # Nullable list of nullable strings
+  relatedLinks: [String]
+  
+  # Nullable nested object
+  metadata: PostMetadata
+}
+
+# Comment type
+type Comment {
+  id: ID!
+  text: String!
+  author: User!
+  post: Post!
+  createdAt: String!
+  updatedAt: String
+  likes: Int
+  replies: [Comment]
+}
+
+# User profile type
+type UserProfile {
+  bio: String
+  avatarUrl: String
+  joinDate: String!
+  location: String
+  website: String
+  socialLinks: [SocialLink]
+}
+
+# Social link type
+type SocialLink {
+  platform: String!
+  url: String!
+}
+
+# Post metadata type
+type PostMetadata {
+  views: Int
+  likes: Int
+  shares: Int
+  readTime: Int
+  keywords: [String!]
+}
+
+# Input types
+input CreateUserInput {
+  username: String!
+  fullName: String
+  email: String
+  password: String!
+}
+
+input CreatePostInput {
+  title: String!
+  subtitle: String
+  content: String!
+  tags: [String!]
+}
+
+input AddCommentInput {
+  postId: ID!
+  text: String!
+}
+
+input UserFilter {
+  isActive: Boolean
+  username: String
+}
+
+input PostFilter {
+  authorId: ID
+  tag: String
+  publishedOnly: Boolean
+}
+
+# Result types with nullable error fields
+type UserResult {
+  user: User
+  errors: [Error!]
+}
+
+type PostResult {
+  post: Post
+  errors: [Error!]
+}
+
+type CommentResult {
+  comment: Comment
+  errors: [Error!]
+}
+
+# Error type
+type Error {
+  message: String!
+  path: [String!]
+}

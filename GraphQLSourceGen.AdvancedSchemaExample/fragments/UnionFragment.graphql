@@ -1,0 +1,62 @@
+# Search result union fragment
+# This demonstrates handling of union types with multiple possible types
+fragment SearchResultFragment on SearchResult {
+  __typename
+  
+  # Fields specific to User
+  ... on User {
+    id
+    name
+    email
+    role
+    profile {
+      bio
+      avatarUrl
+    }
+  }
+  
+  # Fields specific to Article
+  ... on Article {
+    id
+    title
+    body
+    publishedAt
+    author {
+      id
+      name
+    }
+    tags
+    readTimeMinutes
+    featuredImage
+    commentCount
+    likeCount
+  }
+  
+  # Fields specific to Video
+  ... on Video {
+    id
+    title
+    description
+    url
+    durationSeconds
+    publishedAt
+    author {
+      id
+      name
+    }
+    thumbnailUrl
+    commentCount
+    likeCount
+  }
+  
+  # Fields specific to Product
+  ... on Product {
+    id
+    name
+    description
+    price
+    inStock
+    categories
+    averageRating
+  }
+}

@@ -1,0 +1,73 @@
+# Base post fragment with essential fields
+fragment BasePost on Post {
+  id
+  title
+  slug
+  summary
+  createdAt
+  publishedAt
+  isPublished
+}
+
+# Post fragment with content, using the base post fragment
+fragment PostWithContent on Post {
+  ...BasePost
+  content
+  tags
+  categories
+  featuredImage
+  likes
+  views
+  metadata {
+    readTime
+    wordCount
+    keywords
+    seoTitle
+    seoDescription
+  }
+}
+
+# Post fragment with author, using the base post fragment
+fragment PostWithAuthor on Post {
+  ...BasePost
+  author {
+    id
+    username
+    firstName
+    lastName
+    fullName
+    avatarUrl
+  }
+}
+
+# Post fragment with comments, using the base post fragment
+fragment PostWithComments on Post {
+  ...BasePost
+  comments {
+    id
+    content
+    createdAt
+    likes
+    author {
+      id
+      username
+      avatarUrl
+    }
+    replies {
+      id
+      content
+      author {
+        id
+        username
+      }
+    }
+  }
+}
+
+# Complete post fragment with all information, using multiple fragments
+fragment CompletePost on Post {
+  ...BasePost
+  ...PostWithContent
+  ...PostWithAuthor
+  ...PostWithComments
+}

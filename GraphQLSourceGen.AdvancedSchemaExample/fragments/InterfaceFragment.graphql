@@ -1,0 +1,63 @@
+# Content interface fragment
+# This demonstrates handling of interfaces with multiple implementations
+fragment ContentFragment on Content {
+  __typename
+  id
+  title
+  createdAt
+  author {
+    id
+    name
+    email
+  }
+  contentType
+  tags
+  metadata
+  
+  # Fields specific to Article
+  ... on Article {
+    body
+    publishedAt
+    readTimeMinutes
+    featuredImage
+    commentCount
+    likeCount
+  }
+  
+  # Fields specific to Video
+  ... on Video {
+    description
+    url
+    durationSeconds
+    thumbnailUrl
+    commentCount
+    likeCount
+  }
+}
+
+# Commentable interface fragment
+fragment CommentableFragment on Commentable {
+  __typename
+  commentCount
+  comments {
+    id
+    text
+    author {
+      id
+      name
+    }
+    createdAt
+  }
+  
+  # Include fields specific to the implementing types
+  ... on Article {
+    id
+    title
+  }
+  
+  ... on Video {
+    id
+    title
+    url
+  }
+}

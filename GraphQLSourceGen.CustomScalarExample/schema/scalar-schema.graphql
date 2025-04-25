@@ -1,0 +1,153 @@
+# GraphQL Schema with Custom Scalar Types
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  user(id: UUID!): User
+  product(id: UUID!): Product
+  event(id: UUID!): Event
+  document(id: UUID!): Document
+  location(id: UUID!): Location
+  transaction(id: UUID!): Transaction
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+  uploadDocument(input: UploadDocumentInput!): Document!
+  recordTransaction(input: TransactionInput!): Transaction!
+}
+
+# User type with various scalar fields
+type User {
+  id: UUID!
+  name: String!
+  email: Email!
+  phone: PhoneNumber
+  dateOfBirth: Date
+  registeredAt: DateTime!
+  lastLoginAt: DateTime
+  profileColor: Color
+  settings: JSON
+  profilePicture: URL
+}
+
+# Product type with various scalar fields
+type Product {
+  id: UUID!
+  name: String!
+  description: String
+  price: Decimal!
+  weight: Float
+  dimensions: JSON
+  color: Color
+  inStock: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  tags: [String!]
+}
+
+# Event type with date/time scalars
+type Event {
+  id: UUID!
+  title: String!
+  description: String
+  startDate: DateTime!
+  endDate: DateTime!
+  duration: Duration!
+  location: Location
+  organizer: User!
+  attendees: [User!]
+  maxAttendees: BigInt
+  metadata: JSON
+}
+
+# Document type with file-related scalars
+type Document {
+  id: UUID!
+  title: String!
+  fileSize: BigInt!
+  mimeType: String!
+  uploadedAt: DateTime!
+  uploadedBy: User!
+  content: ByteArray
+  checksum: String!
+  downloadUrl: URL!
+  metadata: JSON
+}
+
+# Location type with geo scalars
+type Location {
+  id: UUID!
+  name: String!
+  address: String!
+  latitude: Float!
+  longitude: Float!
+  openingTime: Time
+  closingTime: Time
+  timezone: String
+  metadata: JSON
+}
+
+# Transaction type with financial scalars
+type Transaction {
+  id: UUID!
+  user: User!
+  amount: Decimal!
+  currency: String!
+  timestamp: DateTime!
+  status: TransactionStatus!
+  reference: String
+  metadata: JSON
+}
+
+# Input types
+input CreateUserInput {
+  name: String!
+  email: Email!
+  phone: PhoneNumber
+  dateOfBirth: Date
+  profileColor: Color
+  settings: JSON
+}
+
+input UploadDocumentInput {
+  title: String!
+  file: Upload!
+  metadata: JSON
+}
+
+input TransactionInput {
+  userId: UUID!
+  amount: Decimal!
+  currency: String!
+  reference: String
+  metadata: JSON
+}
+
+# Enum types
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+# Custom scalar types
+scalar UUID
+scalar Email
+scalar PhoneNumber
+scalar DateTime
+scalar Date
+scalar Time
+scalar Duration
+scalar URL
+scalar JSON
+scalar BigInt
+scalar Decimal
+scalar Upload
+scalar Byte
+scalar ByteArray
+scalar Color

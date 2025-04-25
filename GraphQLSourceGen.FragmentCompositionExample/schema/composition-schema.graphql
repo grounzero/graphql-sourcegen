@@ -1,0 +1,262 @@
+# GraphQL Schema for Fragment Composition Example
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  user(id: ID!): User
+  post(id: ID!): Post
+  product(id: ID!): Product
+  order(id: ID!): Order
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+  createPost(input: CreatePostInput!): Post!
+  createProduct(input: CreateProductInput!): Product!
+  createOrder(input: CreateOrderInput!): Order!
+}
+
+# User type
+type User {
+  id: ID!
+  username: String!
+  email: String!
+  firstName: String
+  lastName: String
+  fullName: String
+  bio: String
+  avatarUrl: String
+  createdAt: String!
+  updatedAt: String
+  isActive: Boolean!
+  posts: [Post!]
+  comments: [Comment!]
+  orders: [Order!]
+  address: Address
+  preferences: UserPreferences
+}
+
+# Post type
+type Post {
+  id: ID!
+  title: String!
+  slug: String!
+  summary: String
+  content: String!
+  author: User!
+  createdAt: String!
+  updatedAt: String
+  publishedAt: String
+  isPublished: Boolean!
+  tags: [String!]
+  categories: [String!]
+  comments: [Comment!]
+  likes: Int!
+  views: Int!
+  featuredImage: String
+  metadata: PostMetadata
+}
+
+# Comment type
+type Comment {
+  id: ID!
+  content: String!
+  author: User!
+  post: Post!
+  createdAt: String!
+  updatedAt: String
+  likes: Int!
+  replies: [Comment!]
+}
+
+# Product type
+type Product {
+  id: ID!
+  name: String!
+  description: String
+  price: Float!
+  salePrice: Float
+  onSale: Boolean!
+  sku: String!
+  inventory: Int!
+  categories: [String!]!
+  tags: [String!]
+  images: [String!]
+  reviews: [Review!]
+  rating: Float
+  dimensions: ProductDimensions
+  weight: Float
+  manufacturer: String
+  createdAt: String!
+  updatedAt: String
+}
+
+# Order type
+type Order {
+  id: ID!
+  user: User!
+  orderNumber: String!
+  items: [OrderItem!]!
+  totalAmount: Float!
+  status: OrderStatus!
+  createdAt: String!
+  updatedAt: String
+  shippingAddress: Address!
+  billingAddress: Address!
+  paymentMethod: PaymentMethod!
+  shippingMethod: ShippingMethod!
+  notes: String
+}
+
+# Address type
+type Address {
+  street: String!
+  city: String!
+  state: String!
+  zipCode: String!
+  country: String!
+}
+
+# User preferences type
+type UserPreferences {
+  theme: String
+  emailNotifications: Boolean!
+  pushNotifications: Boolean!
+  language: String!
+  timezone: String!
+}
+
+# Post metadata type
+type PostMetadata {
+  readTime: Int
+  wordCount: Int
+  keywords: [String!]
+  seoTitle: String
+  seoDescription: String
+}
+
+# Product dimensions type
+type ProductDimensions {
+  length: Float!
+  width: Float!
+  height: Float!
+  unit: String!
+}
+
+# Review type
+type Review {
+  id: ID!
+  user: User!
+  product: Product!
+  rating: Int!
+  title: String
+  content: String
+  createdAt: String!
+  updatedAt: String
+  helpful: Int!
+  verified: Boolean!
+}
+
+# Order item type
+type OrderItem {
+  product: Product!
+  quantity: Int!
+  price: Float!
+  total: Float!
+}
+
+# Payment method type
+type PaymentMethod {
+  type: PaymentType!
+  cardLastFour: String
+  cardBrand: String
+}
+
+# Shipping method type
+type ShippingMethod {
+  name: String!
+  price: Float!
+  estimatedDelivery: String
+}
+
+# Enums
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentType {
+  CREDIT_CARD
+  PAYPAL
+  BANK_TRANSFER
+  CASH
+}
+
+# Input types
+input CreateUserInput {
+  username: String!
+  email: String!
+  firstName: String
+  lastName: String
+  bio: String
+  avatarUrl: String
+}
+
+input CreatePostInput {
+  title: String!
+  content: String!
+  tags: [String!]
+  categories: [String!]
+  featuredImage: String
+}
+
+input CreateProductInput {
+  name: String!
+  description: String
+  price: Float!
+  sku: String!
+  inventory: Int!
+  categories: [String!]!
+  tags: [String!]
+}
+
+input CreateOrderInput {
+  userId: ID!
+  items: [OrderItemInput!]!
+  shippingAddress: AddressInput!
+  billingAddress: AddressInput!
+  paymentMethod: PaymentMethodInput!
+  shippingMethod: ShippingMethodInput!
+  notes: String
+}
+
+input OrderItemInput {
+  productId: ID!
+  quantity: Int!
+}
+
+input AddressInput {
+  street: String!
+  city: String!
+  state: String!
+  zipCode: String!
+  country: String!
+}
+
+input PaymentMethodInput {
+  type: PaymentType!
+  cardLastFour: String
+  cardBrand: String
+}
+
+input ShippingMethodInput {
+  name: String!
+  price: Float!
+  estimatedDelivery: String
+}

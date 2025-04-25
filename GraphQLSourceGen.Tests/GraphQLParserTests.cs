@@ -232,5 +232,63 @@ namespace GraphQLSourceGen.Tests
             result = GraphQLParser.MapToCSharpType(nonNullableListType);
             Assert.Equal("List<string>", result);
         }
+        
+        [Fact]
+        public void ParseContent_FragmentWithInlineFragments_ReturnsCorrectModel()
+        {
+            // Arrange
+            string graphql = @"
+                fragment ContentWithInlineFragments on Content {
+                  id
+                  title
+                  contentType
+                  
+                  ... on Article {
+                    body
+                    publishedAt
+                    readTimeMinutes
+                  }
+                  
+                  ... on Video {
+                    url
+                    durationSeconds
+                    thumbnailUrl
+                  }
+                }
+            ";
+
+            // Act
+            var fragments = GraphQLParser.ParseContent(graphql);
+
+            // Assert
+            Assert.Single(fragments);
+
+            var fragment = fragments[0];
+            Assert.Equal("ContentWithInlineFragments", fragment.Name);
+            Assert.Equal("Content", fragment.OnType);
+            
+            // We should have 5 fields: id, title, contentType, and two inline fragments
+            Assert.Equal(5, fragment.Fields.Count);
+            
+            // Check regular fields
+            Assert.Contains(fragment.Fields, f => f.Name == "id");
+            Assert.Contains(fragment.Fields, f => f.Name == "title");
+            Assert.Contains(fragment.Fields, f => f.Name == "contentType");
+            
+            // Check inline fragments
+            var articleFragment = fragment.Fields.FirstOrDefault(f => f.InlineFragmentType == "Article");
+            Assert.NotNull(articleFragment);
+            Assert.Equal(3, articleFragment.SelectionSet.Count);
+            Assert.Contains(articleFragment.SelectionSet, f => f.Name == "body");
+            Assert.Contains(articleFragment.SelectionSet, f => f.Name == "publishedAt");
+            Assert.Contains(articleFragment.SelectionSet, f => f.Name == "readTimeMinutes");
+            
+            var videoFragment = fragment.Fields.FirstOrDefault(f => f.InlineFragmentType == "Video");
+            Assert.NotNull(videoFragment);
+            Assert.Equal(3, videoFragment.SelectionSet.Count);
+            Assert.Contains(videoFragment.SelectionSet, f => f.Name == "url");
+            Assert.Contains(videoFragment.SelectionSet, f => f.Name == "durationSeconds");
+            Assert.Contains(videoFragment.SelectionSet, f => f.Name == "thumbnailUrl");
+        }
     }
 }

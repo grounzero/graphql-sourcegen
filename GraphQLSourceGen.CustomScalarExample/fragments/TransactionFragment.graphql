@@ -1,0 +1,15 @@
+# Transaction fragment demonstrating financial scalar mappings
+fragment TransactionWithFinancialScalars on Transaction {
+  id
+  user {
+    id
+    name
+    email
+  }
+  amount
+  currency
+  timestamp
+  status
+  reference
+  metadata
+}

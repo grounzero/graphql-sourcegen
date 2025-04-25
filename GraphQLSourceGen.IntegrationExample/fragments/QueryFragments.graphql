@@ -1,0 +1,43 @@
+# Query fragments for integration with GraphQL client
+
+# Query to get all books
+fragment GetAllBooksQuery on Query {
+  books {
+    ...BookBasic
+  }
+}
+
+# Query to get a book by ID
+fragment GetBookByIdQuery on Query {
+  book(id: "PLACEHOLDER_ID") {
+    ...BookComplete
+  }
+}
+
+# Query to get all authors
+fragment GetAllAuthorsQuery on Query {
+  authors {
+    ...AuthorBasic
+  }
+}
+
+# Query to get an author by ID
+fragment GetAuthorByIdQuery on Query {
+  author(id: "PLACEHOLDER_ID") {
+    ...AuthorComplete
+  }
+}
+
+# Query to get an author with their books
+fragment GetAuthorWithBooksQuery on Query {
+  author(id: "PLACEHOLDER_ID") {
+    ...AuthorWithBooks
+  }
+}
+
+# Query to get a book with its authors
+fragment GetBookWithAuthorsQuery on Query {
+  book(id: "PLACEHOLDER_ID") {
+    ...BookDetailed
+  }
+}

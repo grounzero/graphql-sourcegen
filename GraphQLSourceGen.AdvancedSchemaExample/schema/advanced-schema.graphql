@@ -1,0 +1,716 @@
+# Advanced GraphQL Schema with complex features
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Query {
+  node(id: ID!): Node
+  search(query: String!): [SearchResult!]
+  content(id: ID!): Content
+  contentByType(type: ContentType!): [Content!]!
+  user(id: ID!): User
+  product(id: ID!): Product
+  order(id: ID!): Order
+}
+
+type Mutation {
+  createContent(input: CreateContentInput!): Content!
+  updateContent(id: ID!, input: UpdateContentInput!): Content!
+  deleteContent(id: ID!): Boolean!
+  placeOrder(input: PlaceOrderInput!): Order!
+}
+
+type Subscription {
+  contentUpdated: Content!
+  orderStatusChanged(orderId: ID!): Order!
+}
+
+# Interface definitions
+
+"""
+Node interface for global object identification
+"""
+interface Node {
+  """
+  The ID of the object
+  """
+  id: ID!
+}
+
+"""
+Content interface for all content types
+"""
+interface Content implements Node {
+  """
+  The ID of the content
+  """
+  id: ID!
+  
+  """
+  The title of the content
+  """
+  title: String!
+  
+  """
+  The date the content was created
+  """
+  createdAt: DateTime!
+  
+  """
+  The author of the content
+  """
+  author: User!
+  
+  """
+  The type of content
+  """
+  contentType: ContentType!
+  
+  """
+  Tags associated with the content
+  """
+  tags: [String!]
+  
+  """
+  Metadata for the content
+  """
+  metadata: JSON
+}
+
+"""
+Commentable interface for content that can be commented on
+"""
+interface Commentable {
+  """
+  Comments on the content
+  """
+  comments: [Comment!]!
+  
+  """
+  Total number of comments
+  """
+  commentCount: Int!
+}
+
+"""
+Likeable interface for content that can be liked
+"""
+interface Likeable {
+  """
+  Users who liked the content
+  """
+  likedBy: [User!]!
+  
+  """
+  Total number of likes
+  """
+  likeCount: Int!
+}
+
+# Object type definitions
+
+"""
+User type representing a user in the system
+"""
+type User implements Node {
+  """
+  The ID of the user
+  """
+  id: ID!
+  
+  """
+  The name of the user
+  """
+  name: String!
+  
+  """
+  The email of the user
+  """
+  email: String!
+  
+  """
+  The role of the user
+  """
+  role: UserRole!
+  
+  """
+  The profile of the user
+  """
+  profile: UserProfile
+  
+  """
+  Content created by the user
+  """
+  content: [Content!]!
+  
+  """
+  Orders placed by the user
+  """
+  orders: [Order!]!
+}
+
+"""
+User profile type
+"""
+type UserProfile {
+  """
+  The bio of the user
+  """
+  bio: String
+  
+  """
+  The avatar URL of the user
+  """
+  avatarUrl: String
+  
+  """
+  The date the user joined
+  """
+  joinDate: DateTime!
+  
+  """
+  Social media links
+  """
+  socialLinks: [SocialLink!]
+}
+
+"""
+Social link type
+"""
+type SocialLink {
+  """
+  The platform of the social link
+  """
+  platform: SocialPlatform!
+  
+  """
+  The URL of the social link
+  """
+  url: String!
+}
+
+"""
+Article type representing a blog post
+"""
+type Article implements Node & Content & Commentable & Likeable {
+  """
+  The ID of the article
+  """
+  id: ID!
+  
+  """
+  The title of the article
+  """
+  title: String!
+  
+  """
+  The content of the article
+  """
+  body: String!
+  
+  """
+  The date the article was created
+  """
+  createdAt: DateTime!
+  
+  """
+  The date the article was published
+  """
+  publishedAt: DateTime
+  
+  """
+  The author of the article
+  """
+  author: User!
+  
+  """
+  The type of content
+  """
+  contentType: ContentType!
+  
+  """
+  Tags associated with the article
+  """
+  tags: [String!]
+  
+  """
+  Metadata for the article
+  """
+  metadata: JSON
+  
+  """
+  Comments on the article
+  """
+  comments: [Comment!]!
+  
+  """
+  Total number of comments
+  """
+  commentCount: Int!
+  
+  """
+  Users who liked the article
+  """
+  likedBy: [User!]!
+  
+  """
+  Total number of likes
+  """
+  likeCount: Int!
+  
+  """
+  The estimated reading time in minutes
+  """
+  readTimeMinutes: Int
+  
+  """
+  Featured image URL
+  """
+  featuredImage: String
+}
+
+"""
+Video type representing a video content
+"""
+type Video implements Node & Content & Commentable & Likeable {
+  """
+  The ID of the video
+  """
+  id: ID!
+  
+  """
+  The title of the video
+  """
+  title: String!
+  
+  """
+  The description of the video
+  """
+  description: String
+  
+  """
+  The URL of the video
+  """
+  url: String!
+  
+  """
+  The duration of the video in seconds
+  """
+  durationSeconds: Int!
+  
+  """
+  The date the video was created
+  """
+  createdAt: DateTime!
+  
+  """
+  The date the video was published
+  """
+  publishedAt: DateTime
+  
+  """
+  The author of the video
+  """
+  author: User!
+  
+  """
+  The type of content
+  """
+  contentType: ContentType!
+  
+  """
+  Tags associated with the video
+  """
+  tags: [String!]
+  
+  """
+  Metadata for the video
+  """
+  metadata: JSON
+  
+  """
+  Comments on the video
+  """
+  comments: [Comment!]!
+  
+  """
+  Total number of comments
+  """
+  commentCount: Int!
+  
+  """
+  Users who liked the video
+  """
+  likedBy: [User!]!
+  
+  """
+  Total number of likes
+  """
+  likeCount: Int!
+  
+  """
+  Thumbnail URL
+  """
+  thumbnailUrl: String
+}
+
+"""
+Product type representing a product in the system
+"""
+type Product implements Node {
+  """
+  The ID of the product
+  """
+  id: ID!
+  
+  """
+  The name of the product
+  """
+  name: String!
+  
+  """
+  The description of the product
+  """
+  description: String
+  
+  """
+  The price of the product
+  """
+  price: Float!
+  
+  """
+  Whether the product is in stock
+  """
+  inStock: Boolean!
+  
+  """
+  The categories of the product
+  """
+  categories: [String!]!
+  
+  """
+  Reviews of the product
+  """
+  reviews: [Review!]!
+  
+  """
+  Average rating of the product
+  """
+  averageRating: Float
+}
+
+"""
+Order type representing an order in the system
+"""
+type Order implements Node {
+  """
+  The ID of the order
+  """
+  id: ID!
+  
+  """
+  The user who placed the order
+  """
+  user: User!
+  
+  """
+  The items in the order
+  """
+  items: [OrderItem!]!
+  
+  """
+  The total amount of the order
+  """
+  totalAmount: Float!
+  
+  """
+  The status of the order
+  """
+  status: OrderStatus!
+  
+  """
+  The date the order was placed
+  """
+  placedAt: DateTime!
+  
+  """
+  The date the order was updated
+  """
+  updatedAt: DateTime!
+}
+
+"""
+Order item type representing an item in an order
+"""
+type OrderItem {
+  """
+  The product in the order item
+  """
+  product: Product!
+  
+  """
+  The quantity of the product
+  """
+  quantity: Int!
+  
+  """
+  The price of the product at the time of order
+  """
+  price: Float!
+}
+
+"""
+Comment type representing a comment on content
+"""
+type Comment implements Node {
+  """
+  The ID of the comment
+  """
+  id: ID!
+  
+  """
+  The text of the comment
+  """
+  text: String!
+  
+  """
+  The author of the comment
+  """
+  author: User!
+  
+  """
+  The date the comment was created
+  """
+  createdAt: DateTime!
+  
+  """
+  The content the comment is on
+  """
+  content: Content!
+}
+
+"""
+Review type representing a review of a product
+"""
+type Review implements Node {
+  """
+  The ID of the review
+  """
+  id: ID!
+  
+  """
+  The rating of the review (1-5)
+  """
+  rating: Int!
+  
+  """
+  The text of the review
+  """
+  text: String
+  
+  """
+  The author of the review
+  """
+  author: User!
+  
+  """
+  The product the review is for
+  """
+  product: Product!
+  
+  """
+  The date the review was created
+  """
+  createdAt: DateTime!
+}
+
+# Input types
+
+"""
+Input for creating content
+"""
+input CreateContentInput {
+  """
+  The title of the content
+  """
+  title: String!
+  
+  """
+  The type of content
+  """
+  contentType: ContentType!
+  
+  """
+  Tags associated with the content
+  """
+  tags: [String!]
+  
+  """
+  Content-specific fields
+  """
+  fields: JSON!
+}
+
+"""
+Input for updating content
+"""
+input UpdateContentInput {
+  """
+  The title of the content
+  """
+  title: String
+  
+  """
+  Tags associated with the content
+  """
+  tags: [String!]
+  
+  """
+  Content-specific fields
+  """
+  fields: JSON
+}
+
+"""
+Input for placing an order
+"""
+input PlaceOrderInput {
+  """
+  The items in the order
+  """
+  items: [OrderItemInput!]!
+}
+
+"""
+Input for an order item
+"""
+input OrderItemInput {
+  """
+  The ID of the product
+  """
+  productId: ID!
+  
+  """
+  The quantity of the product
+  """
+  quantity: Int!
+}
+
+# Enum types
+
+"""
+User role enum
+"""
+enum UserRole {
+  """
+  Admin role with full access
+  """
+  ADMIN
+  
+  """
+  Editor role with content management access
+  """
+  EDITOR
+  
+  """
+  Viewer role with read-only access
+  """
+  VIEWER
+}
+
+"""
+Content type enum
+"""
+enum ContentType {
+  """
+  Article content type
+  """
+  ARTICLE
+  
+  """
+  Video content type
+  """
+  VIDEO
+}
+
+"""
+Order status enum
+"""
+enum OrderStatus {
+  """
+  Order has been placed
+  """
+  PLACED
+  
+  """
+  Order is being processed
+  """
+  PROCESSING
+  
+  """
+  Order has been shipped
+  """
+  SHIPPED
+  
+  """
+  Order has been delivered
+  """
+  DELIVERED
+  
+  """
+  Order has been cancelled
+  """
+  CANCELLED
+}
+
+"""
+Social platform enum
+"""
+enum SocialPlatform {
+  """
+  Twitter platform
+  """
+  TWITTER
+  
+  """
+  Facebook platform
+  """
+  FACEBOOK
+  
+  """
+  Instagram platform
+  """
+  INSTAGRAM
+  
+  """
+  LinkedIn platform
+  """
+  LINKEDIN
+  
+  """
+  GitHub platform
+  """
+  GITHUB
+}
+
+# Union types
+
+"""
+Search result union type
+"""
+union SearchResult = User | Article | Video | Product
+
+# Scalar types
+
+"""
+DateTime scalar type
+"""
+scalar DateTime
+
+"""
+JSON scalar type
+"""
+scalar JSON

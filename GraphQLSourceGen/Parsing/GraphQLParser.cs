@@ -252,11 +252,50 @@ namespace GraphQLSourceGen.Parsing
             {
                 try
                 {
-                    // Check for fragment spread
+                    // Check for fragment spread or inline fragment
                     if (tokens[position].Value == "...")
                     {
                         position++; // Skip '...'
-                        if (position < tokens.Count && tokens[position].Type == TokenType.Identifier)
+                        
+                        // Check for inline fragment (... on Type)
+                        if (position < tokens.Count && tokens[position].Value == "on")
+                        {
+                            position++; // Skip 'on'
+                            
+                            if (position < tokens.Count && tokens[position].Type == TokenType.Identifier)
+                            {
+                                string typeName = tokens[position].Value;
+                                position++; // Skip type name
+                                
+                                // Expect opening brace
+                                if (position < tokens.Count && tokens[position].Value == "{")
+                                {
+                                    position++; // Skip '{'
+                                    
+                                    // Create a field for the inline fragment
+                                    var inlineFragmentField = new GraphQLField
+                                    {
+                                        InlineFragmentType = typeName
+                                    };
+                                    
+                                    // Parse the selection set for the inline fragment
+                                    inlineFragmentField.SelectionSet = ParseSelectionSet(tokens, ref position);
+                                    
+                                    // Add the inline fragment field to the fields list
+                                    fields.Add(inlineFragmentField);
+                                }
+                                else
+                                {
+                                    throw new Exception("Expected '{' after inline fragment type");
+                                }
+                            }
+                            else
+                            {
+                                throw new Exception("Expected type name after 'on' in inline fragment");
+                            }
+                        }
+                        // Regular fragment spread
+                        else if (position < tokens.Count && tokens[position].Type == TokenType.Identifier)
                         {
                             var spreadField = new GraphQLField();
                             spreadField.FragmentSpreads.Add(tokens[position].Value);
@@ -265,7 +304,7 @@ namespace GraphQLSourceGen.Parsing
                         }
                         else
                         {
-                            throw new Exception("Expected fragment name after spread operator");
+                            throw new Exception("Expected 'on' or fragment name after spread operator");
                         }
                     }
                     // Parse field

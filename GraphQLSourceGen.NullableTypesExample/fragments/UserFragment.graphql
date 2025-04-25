@@ -1,0 +1,57 @@
+# User fragment demonstrating various nullability patterns
+fragment UserWithNullability on User {
+  # Non-nullable scalar
+  id
+  
+  # Non-nullable string
+  username
+  
+  # Nullable string
+  fullName
+  
+  # Nullable scalar
+  email
+  
+  # Non-nullable boolean
+  isActive
+  
+  # Nullable object
+  profile {
+    bio
+    avatarUrl
+    joinDate
+    location
+    website
+    socialLinks {
+      platform
+      url
+    }
+  }
+  
+  # Non-nullable list of non-nullable objects
+  posts {
+    id
+    title
+  }
+  
+  # Nullable list of non-nullable objects
+  drafts {
+    id
+    title
+  }
+  
+  # Non-nullable list of nullable objects
+  comments {
+    id
+    text
+  }
+  
+  # Nullable list of nullable objects
+  savedPosts {
+    id
+    title
+  }
+  
+  # Non-nullable nested list
+  roles
+}
