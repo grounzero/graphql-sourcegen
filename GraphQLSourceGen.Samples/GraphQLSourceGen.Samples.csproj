@@ -15,12 +15,17 @@
 
   <ItemGroup>
     <AdditionalFiles Include="**\*.graphql" />
+    <None Include="schema-definition.graphql" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="schema.graphql" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   
   <!-- Custom configuration -->
   <PropertyGroup>
     <GraphQLSourceGenNamespace>GraphQL.Generated</GraphQLSourceGenNamespace>
     <GraphQLSourceGenUseRecords>true</GraphQLSourceGenUseRecords>
+    <GraphQLSourceGenUseSchemaForTypeInference>true</GraphQLSourceGenUseSchemaForTypeInference>
+    <GraphQLSourceGenSchemaFiles>schema-definition.graphql</GraphQLSourceGenSchemaFiles>
+    <GraphQLSourceGenCustomScalarMappings>DateTime:System.DateTime;Date:System.DateOnly;Time:System.TimeOnly</GraphQLSourceGenCustomScalarMappings>
   </PropertyGroup>
 
 </Project>

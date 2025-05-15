@@ -139,6 +139,19 @@ namespace GraphQLSourceGen.Samples
                 Console.WriteLine($"Stack Trace: {ex.StackTrace}");
             }
 
+            // Demonstrate schema-aware fragment generation
+            try
+            {
+                // Create a SchemaAwareExample instance
+                var schemaAwareExample = new SchemaAwareExample();
+                SchemaAwareExample.Run();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in schema-aware example: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+            }
+
             Console.WriteLine("\nPress any key to exit...");
             Console.ReadKey();
         }
