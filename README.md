@@ -90,7 +90,7 @@ Schema-Aware Configuration Options
 | GraphQLSourceGenValidateNonNullableFields | true | Generate validation for non-nullable fields |
 | GraphQLSourceGenIncludeFieldDescriptions | true | Include field descriptions from schema in generated code |
 | GraphQLSourceGenSchemaFiles | "" | Semicolon-separated list of schema files to use for type inference |
-| GraphQLSourceGenCustomScalarMappings | "DateTime:System.DateTime;Date:System.DateOnly;Time:System.TimeOnly" | Custom scalar type mappings |
+| GraphQLSourceGenCustomScalarMappings | "DateTime;Date;DateOnly;Time;TimeOnly" | Custom scalar type mappings |
 
 
 ## XML Documentation Comments
