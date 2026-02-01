@@ -13,7 +13,7 @@ A Roslyn-based C# Source Generator that scans GraphQL files for fragment definit
 - Supports `@deprecated` directive with `[Obsolete]` attributes
 - Handles fragment spreads through composition
 - Configurable output (namespace, records vs classes, etc.)
-- Comprehensive error reporting and diagnostics
+- Error reporting and diagnostics
 
 ## Installation
 
